@@ -84,4 +84,40 @@ class TrainingDao extends DatabaseAccessor<TraumDatabase>
 
   Future<int> deleteSet(int id) =>
       (delete(workoutSets)..where((t) => t.id.equals(id))).go();
+
+  // Single session by id
+  Stream<WorkoutSession?> watchSession(int id) =>
+      (select(workoutSessions)..where((t) => t.id.equals(id)))
+          .watchSingleOrNull();
+
+  // All sets for a session as a one-shot Future
+  Future<List<WorkoutSet>> getSetsForSession(int sessionId) =>
+      (select(workoutSets)
+            ..where((t) => t.sessionId.equals(sessionId))
+            ..orderBy([
+              (t) => OrderingTerm(expression: t.exerciseId),
+              (t) => OrderingTerm(expression: t.setNumber),
+            ]))
+          .get();
+
+  // All sessions that contain at least one set for a given exercise, ordered
+  Future<List<WorkoutSession>> _getSessionsForExercise(int exerciseId) async {
+    final sets = await (select(workoutSets)
+          ..where((t) => t.exerciseId.equals(exerciseId)))
+        .get();
+    final sessionIds = sets.map((s) => s.sessionId).toSet().toList();
+    if (sessionIds.isEmpty) return [];
+    return (select(workoutSessions)
+          ..where((t) => t.id.isIn(sessionIds))
+          ..orderBy([(t) => OrderingTerm(expression: t.startedAt)]))
+        .get();
+  }
+
+  Stream<List<WorkoutSession>> watchSessionsForExercise(int exerciseId) =>
+      watchSessions()
+          .asyncMap((_) => _getSessionsForExercise(exerciseId));
+
+  // Single exercise by id
+  Future<Exercise?> getExercise(int id) =>
+      (select(exercises)..where((t) => t.id.equals(id))).getSingleOrNull();
 }

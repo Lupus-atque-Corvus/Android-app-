@@ -37,6 +37,8 @@ dependencies:
   # Notifications
   flutter_local_notifications: ^17.2.3
   workmanager: ^0.5.2
+  timezone: ^0.9.4
+  flutter_timezone: ^1.0.4
 
   # Homescreen widgets
   home_widget: ^0.6.0

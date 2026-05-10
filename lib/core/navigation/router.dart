@@ -7,15 +7,22 @@ import '../../features/home/home_screen.dart';
 import '../../features/training/training_screen.dart';
 import '../../features/training/active_workout_screen.dart';
 import '../../features/training/exercise_library_screen.dart';
+import '../../features/training/workout_detail_screen.dart';
+import '../../features/training/exercise_progress_screen.dart';
 import '../../features/health/health_screen.dart';
 import '../../features/nutrition/nutrition_screen.dart';
 import '../../features/nutrition/shopping_list_screen.dart';
+import '../../features/nutrition/meal_log_screen.dart';
+import '../../features/nutrition/food_search_screen.dart';
 import '../../features/supplements/supplement_screen.dart';
 import '../../features/planning/planning_screen.dart';
 import '../../features/medication/medication_screen.dart';
 import '../../features/abstinence/abstinence_screen.dart';
 import '../../features/budget/budget_screen.dart';
 import '../../features/budget/add_transaction_screen.dart';
+import '../../features/budget/transaction_list_screen.dart';
+import '../../features/budget/budget_stats_screen.dart';
+import '../../features/budget/savings_screen.dart';
 import '../../features/period_tracking/period_screen.dart';
 import '../../features/period_tracking/period_calendar_screen.dart';
 import '../../features/period_tracking/cycle_history_screen.dart';
@@ -60,6 +67,18 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(path: 'active', builder: (_, __) => const ActiveWorkoutScreen()),
               GoRoute(path: 'exercises', builder: (_, __) => const ExerciseLibraryScreen()),
+              GoRoute(
+                path: 'session/:id',
+                builder: (_, state) => WorkoutDetailScreen(
+                  sessionId: int.parse(state.pathParameters['id']!),
+                ),
+              ),
+              GoRoute(
+                path: 'exercise/:id/progress',
+                builder: (_, state) => ExerciseProgressScreen(
+                  exerciseId: int.parse(state.pathParameters['id']!),
+                ),
+              ),
             ],
           ),
 
@@ -72,6 +91,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, __) => const NutritionScreen(),
             routes: [
               GoRoute(path: 'shopping', builder: (_, __) => const ShoppingListScreen()),
+              GoRoute(path: 'log', builder: (_, __) => const MealLogScreen()),
+              GoRoute(path: 'search', builder: (_, __) => const FoodSearchScreen()),
             ],
           ),
 
@@ -93,6 +114,9 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, __) => const BudgetScreen(),
             routes: [
               GoRoute(path: 'add', builder: (_, __) => const AddTransactionScreen()),
+              GoRoute(path: 'transactions', builder: (_, __) => const TransactionListScreen()),
+              GoRoute(path: 'stats', builder: (_, __) => const BudgetStatsScreen()),
+              GoRoute(path: 'savings', builder: (_, __) => const SavingsScreen()),
             ],
           ),
 

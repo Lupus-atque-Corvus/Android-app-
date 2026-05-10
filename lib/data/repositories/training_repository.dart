@@ -1,5 +1,4 @@
 import '../database/traum_database.dart';
-import '../database/daos/training_dao.dart';
 
 class TrainingRepository {
   TrainingRepository(this._dao);
@@ -54,4 +53,14 @@ class TrainingRepository {
   Future<bool> updateSet(WorkoutSet entry) => _dao.updateSet(entry);
 
   Future<int> deleteSet(int id) => _dao.deleteSet(id);
+
+  Stream<WorkoutSession?> watchSession(int id) => _dao.watchSession(id);
+
+  Future<List<WorkoutSet>> getSetsForSession(int sessionId) =>
+      _dao.getSetsForSession(sessionId);
+
+  Stream<List<WorkoutSession>> watchSessionsForExercise(int exerciseId) =>
+      _dao.watchSessionsForExercise(exerciseId);
+
+  Future<Exercise?> getExercise(int id) => _dao.getExercise(id);
 }
