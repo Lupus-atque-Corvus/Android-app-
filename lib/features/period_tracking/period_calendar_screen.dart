@@ -104,10 +104,15 @@ class _PeriodCalendarScreenState extends ConsumerState<PeriodCalendarScreen> {
             final isPredicted = predictedDays.contains(day);
 
             Color? bg;
-            if (isPeriod) bg = TraumColors.periodRose;
-            else if (isOvulation) bg = TraumColors.ovulationCyan;
-            else if (isFertile) bg = TraumColors.fertileCyan.withAlpha(100);
-            else if (isPredicted) bg = TraumColors.periodRose.withAlpha(60);
+            if (isPeriod) {
+              bg = TraumColors.periodRose;
+            } else if (isOvulation) {
+              bg = TraumColors.ovulationCyan;
+            } else if (isFertile) {
+              bg = TraumColors.fertileCyan.withAlpha(100);
+            } else if (isPredicted) {
+              bg = TraumColors.periodRose.withAlpha(60);
+            }
 
             return Container(
               margin: const EdgeInsets.all(2),

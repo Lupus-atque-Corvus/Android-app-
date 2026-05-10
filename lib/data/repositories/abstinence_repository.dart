@@ -1,5 +1,4 @@
 import '../database/traum_database.dart';
-import '../database/daos/abstinence_dao.dart';
 
 class AbstinenceRepository {
   AbstinenceRepository(this._dao);

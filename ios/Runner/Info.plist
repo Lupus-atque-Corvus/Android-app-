@@ -83,6 +83,6 @@
 
 	<!-- App Group for home_widget data sharing -->
 	<key>AppGroupIdentifier</key>
-	<string>group.de.traum.traum</string>
+	<string>group.de.traum.widgets</string>
 </dict>
 </plist>

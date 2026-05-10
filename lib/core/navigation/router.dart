@@ -54,8 +54,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) => TraumScaffold(
-          child: child,
           location: state.matchedLocation,
+          child: child,
         ),
         routes: [
           GoRoute(path: Routes.home, builder: (_, __) => const HomeScreen()),
