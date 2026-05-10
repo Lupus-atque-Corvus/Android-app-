@@ -1,0 +1,4 @@
+[
+  {"name": "Kreatin Monohydrat", "category": "creatine", "dosageAmount": "5", "dosageUnit": "g", "timings": ["post_workout"], "notes": "Kann mit Kohlenhydraten zusammen eingenommen werden."},
+  {"name": "Kreatin HCL", "category": "creatine", "dosageAmount": "2", "dosageUnit": "g", "timings": ["post_workout"], "notes": "Bessere Löslichkeit als Monohydrat, weniger Blähungen."}
+]

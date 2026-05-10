@@ -1,0 +1,10 @@
+[
+  {"name": "Klimmzüge", "muscleGroup": "back", "equipment": "bodyweight", "instructions": "Schulterbreiter Griff, aus dem Hang hochziehen bis Kinn über der Stange ist."},
+  {"name": "Latzug", "muscleGroup": "back", "equipment": "cable", "instructions": "Stange schulterbreit greifen, zum Schlüsselbein ziehen ohne Schwung zu nutzen."},
+  {"name": "Langhantel Rudern", "muscleGroup": "back", "equipment": "barbell", "instructions": "Vorgebeugt, Rücken gerade, Stange zum Bauch ziehen."},
+  {"name": "Kurzhantel Rudern", "muscleGroup": "back", "equipment": "dumbbell", "instructions": "Eine Hand auf Bank abstützen, Kurzhantel zur Hüfte ziehen."},
+  {"name": "Seated Cable Row", "muscleGroup": "back", "equipment": "cable", "instructions": "Aufrecht sitzen, Kabelgriff zum Bauch ziehen, Schulterblätter zusammendrücken."},
+  {"name": "T-Bar Rudern", "muscleGroup": "back", "equipment": "barbell", "instructions": "Mit engem Griff die T-Bar zur Brust ziehen."},
+  {"name": "Hyperextensions", "muscleGroup": "back", "equipment": "machine", "instructions": "An der Rückenstreckbank, Oberkörper nach unten lassen und kontrolliert aufrichten."},
+  {"name": "Kreuzheben", "muscleGroup": "back", "equipment": "barbell", "instructions": "Stange vor den Schienbeinen, Rücken gerade, Stange durch Hüftstrecken heben."}
+]

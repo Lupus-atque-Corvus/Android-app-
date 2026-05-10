@@ -1,0 +1,7 @@
+[
+  {"name": "Ashwagandha", "category": "adaptogens", "dosageAmount": "600", "dosageUnit": "mg", "timings": ["evening"], "notes": "KSM-66 oder Sensoril Extrakt, reduziert Cortisol."},
+  {"name": "Rhodiola Rosea", "category": "adaptogens", "dosageAmount": "400", "dosageUnit": "mg", "timings": ["morning"], "notes": "Nüchtern einnehmen, verbessert mentale Ausdauer."},
+  {"name": "Maca", "category": "adaptogens", "dosageAmount": "3", "dosageUnit": "g", "timings": ["morning"], "notes": "In Smoothie oder Joghurt, Energie und Libido."},
+  {"name": "Löwenmähne", "category": "adaptogens", "dosageAmount": "500", "dosageUnit": "mg", "timings": ["morning"], "notes": "NGF-fördernd, kognitive Funktion."},
+  {"name": "Reishi", "category": "adaptogens", "dosageAmount": "1000", "dosageUnit": "mg", "timings": ["evening"], "notes": "Immunsystem und Schlafqualität."}
+]

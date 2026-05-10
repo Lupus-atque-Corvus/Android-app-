@@ -1,0 +1,8 @@
+[
+  {"name": "Trizepsdrücken (Kabel)", "muscleGroup": "triceps", "equipment": "cable", "instructions": "Hohes Kabel, Seil oder Stange nach unten drücken, Ellbogen an den Körper."},
+  {"name": "Dips (Trizeps)", "muscleGroup": "triceps", "equipment": "bodyweight", "instructions": "Aufrechter Oberkörper, Ellbogen nach hinten, tief absenken und drücken."},
+  {"name": "Skull Crushers", "muscleGroup": "triceps", "equipment": "barbell", "instructions": "Flach auf Bank, Stange über Stirn senken und wieder strecken."},
+  {"name": "Trizeps Kickbacks", "muscleGroup": "triceps", "equipment": "dumbbell", "instructions": "Vorgebeugt, Oberarm parallel zum Boden, Unterarm nach hinten strecken."},
+  {"name": "Overhead Trizeps Extension", "muscleGroup": "triceps", "equipment": "dumbbell", "instructions": "Kurzhantel hinter dem Kopf, Ellbogen zeigen nach oben, strecken."},
+  {"name": "Enges Bankdrücken", "muscleGroup": "triceps", "equipment": "barbell", "instructions": "Engerer Griff (Handbreit), Stange tief zur Brust und Trizeps fokussieren."}
+]

@@ -1,0 +1,6 @@
+[
+  {"name": "Koffein", "category": "pre_workout", "dosageAmount": "200", "dosageUnit": "mg", "timings": ["pre_workout"], "notes": "30–60 Min. vor dem Training, nicht nach 14 Uhr."},
+  {"name": "Beta-Alanin", "category": "pre_workout", "dosageAmount": "3.2", "dosageUnit": "g", "timings": ["pre_workout"], "notes": "Kribbeln (Parästhesie) ist normal und harmlos."},
+  {"name": "Citrullin Malat", "category": "pre_workout", "dosageAmount": "6", "dosageUnit": "g", "timings": ["pre_workout"], "notes": "Verbessert Ausdauer und Pump, 40 Min. vor Training."},
+  {"name": "Kreatin (Pre-Workout)", "category": "pre_workout", "dosageAmount": "5", "dosageUnit": "g", "timings": ["pre_workout"], "notes": "Kann auch post-workout eingenommen werden."}
+]

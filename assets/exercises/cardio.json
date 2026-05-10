@@ -1,0 +1,9 @@
+[
+  {"name": "Laufen", "muscleGroup": "cardio", "equipment": "bodyweight", "instructions": "Gleichmäßiges Tempo, Herzfrequenz im aeroben Bereich (60–70 % HFmax)."},
+  {"name": "Fahrradfahren", "muscleGroup": "cardio", "equipment": "machine", "instructions": "Sattel auf Hüfthöhe, gleichmäßiges Treten, Widerstand anpassen."},
+  {"name": "Rudern", "muscleGroup": "cardio", "equipment": "machine", "instructions": "Beine zuerst strecken, dann Oberkörper zurücklehnen und Griff zur Brust ziehen."},
+  {"name": "Seilspringen", "muscleGroup": "cardio", "equipment": "other", "instructions": "Seil mit Handgelenken drehen, leicht auf den Fußballen landen."},
+  {"name": "HIIT Sprint", "muscleGroup": "cardio", "equipment": "bodyweight", "instructions": "20 Sek. Vollsprint, 40 Sek. Pause, 8–10 Runden."},
+  {"name": "Stairmaster", "muscleGroup": "cardio", "equipment": "machine", "instructions": "Treppensteigen auf der Maschine, Tempo und Dauer nach Fitnesslevel."},
+  {"name": "Schwimmen", "muscleGroup": "cardio", "equipment": "other", "instructions": "Intervalle oder gleichmäßige Bahnen, Technik vor Geschwindigkeit."}
+]

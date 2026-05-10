@@ -1,0 +1,9 @@
+[
+  {"name": "Burpees", "muscleGroup": "full_body", "equipment": "bodyweight", "instructions": "Aus dem Stand in den Liegestütz, Liegestütz ausführen, springen und klatschen."},
+  {"name": "Kettlebell Swings", "muscleGroup": "full_body", "equipment": "other", "instructions": "Aus der Hüfte schwingen, nicht aus dem Rücken, Kettlebell bis Schulterniveau."},
+  {"name": "Thrusters", "muscleGroup": "full_body", "equipment": "barbell", "instructions": "Frontkniebeuge mit Schulterdrücken kombiniert, flüssige Bewegung."},
+  {"name": "Clean & Press", "muscleGroup": "full_body", "equipment": "barbell", "instructions": "Stange vom Boden in die Rack-Position ziehen und über Kopf drücken."},
+  {"name": "Man Maker", "muscleGroup": "full_body", "equipment": "dumbbell", "instructions": "Liegestütz, Rudern, Squat-Clean und Schulterdrücken kombiniert."},
+  {"name": "Box Jumps", "muscleGroup": "full_body", "equipment": "other", "instructions": "Aus dem Stand auf eine Box springen, weich landen und zurücksteigen."},
+  {"name": "Turkish Get Up", "muscleGroup": "full_body", "equipment": "other", "instructions": "Mit Kettlebell vom Liegen in den Stand aufstehen, in kontrollierter Reihenfolge."}
+]

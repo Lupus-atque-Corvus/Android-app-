@@ -1,0 +1,9 @@
+[
+  {"name": "Plank", "muscleGroup": "core", "equipment": "bodyweight", "instructions": "Unterarmstütz, Körper gerade wie ein Brett, Bauch anspannen, halten."},
+  {"name": "Crunches", "muscleGroup": "core", "equipment": "bodyweight", "instructions": "Auf dem Rücken liegen, Hände hinter dem Kopf, Oberkörper anheben."},
+  {"name": "Beinheben", "muscleGroup": "core", "equipment": "bodyweight", "instructions": "Rückenlage, gestreckte Beine bis senkrecht heben und kontrolliert senken."},
+  {"name": "Russian Twists", "muscleGroup": "core", "equipment": "bodyweight", "instructions": "Sitzen, Beine angehoben, Oberkörper seitlich rotieren."},
+  {"name": "Ab Wheel Rollouts", "muscleGroup": "core", "equipment": "other", "instructions": "Mit dem Ab Wheel nach vorne rollen, Rücken gerade halten, zurückrollen."},
+  {"name": "Seitlicher Plank", "muscleGroup": "core", "equipment": "bodyweight", "instructions": "Seitwärts auf Unterarm stützen, Hüfte angehoben, Körper gerade."},
+  {"name": "Hollow Body Hold", "muscleGroup": "core", "equipment": "bodyweight", "instructions": "Rückenlage, Arme gestreckt über dem Kopf, Beine leicht angehoben halten."}
+]

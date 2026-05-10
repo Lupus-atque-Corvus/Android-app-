@@ -1,0 +1,6 @@
+[
+  {"name": "Probiotika", "category": "gut_health", "dosageAmount": "10", "dosageUnit": "Mrd. KBE", "timings": ["morning"], "notes": "Nüchtern oder mit Frühstück, verschiedene Stämme bevorzugen."},
+  {"name": "Präbiotika (Inulin)", "category": "gut_health", "dosageAmount": "5", "dosageUnit": "g", "timings": ["morning"], "notes": "In Smoothie oder Wasser einrühren."},
+  {"name": "Flohsamenschalen", "category": "gut_health", "dosageAmount": "10", "dosageUnit": "g", "timings": ["morning", "evening"], "notes": "Mit viel Wasser einnehmen (mind. 300 ml)."},
+  {"name": "Verdauungsenzyme", "category": "gut_health", "dosageAmount": "1", "dosageUnit": "Kapsel", "timings": ["pre_workout"], "notes": "Direkt vor oder zu den Mahlzeiten einnehmen."}
+]

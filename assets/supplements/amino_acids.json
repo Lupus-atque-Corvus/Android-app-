@@ -1,0 +1,8 @@
+[
+  {"name": "BCAA", "category": "amino_acids", "dosageAmount": "5", "dosageUnit": "g", "timings": ["pre_workout", "post_workout"], "notes": "Leucin, Isoleucin, Valin im Verhältnis 2:1:1."},
+  {"name": "L-Glutamin", "category": "amino_acids", "dosageAmount": "5", "dosageUnit": "g", "timings": ["post_workout", "evening"], "notes": "Unterstützt Muskelregeneration und Immunsystem."},
+  {"name": "L-Arginin", "category": "amino_acids", "dosageAmount": "3", "dosageUnit": "g", "timings": ["pre_workout"], "notes": "Fördert Durchblutung, auf nüchternen Magen."},
+  {"name": "L-Carnitin", "category": "amino_acids", "dosageAmount": "1000", "dosageUnit": "mg", "timings": ["morning", "pre_workout"], "notes": "Unterstützt Fettstoffwechsel."},
+  {"name": "L-Tyrosin", "category": "amino_acids", "dosageAmount": "500", "dosageUnit": "mg", "timings": ["morning"], "notes": "Vorstufe von Dopamin und Noradrenalin, nüchtern einnehmen."},
+  {"name": "EAA", "category": "amino_acids", "dosageAmount": "10", "dosageUnit": "g", "timings": ["pre_workout", "post_workout"], "notes": "Alle 9 essentiellen Aminosäuren."}
+]
