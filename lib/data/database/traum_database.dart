@@ -105,7 +105,7 @@ part 'traum_database.g.dart';
 )
 class TraumDatabase extends _$TraumDatabase {
   TraumDatabase() : super(_openConnection());
-  TraumDatabase.forTesting(QueryExecutor executor) : super(executor);
+  TraumDatabase.forTesting(super.executor);
 
   @override
   int get schemaVersion => 1;

@@ -43,5 +43,5 @@ String formatCalories(double kcal) => '${kcal.round()} kcal';
 
 String formatMl(int ml) {
   if (ml >= 1000) return '${(ml / 1000).toStringAsFixed(1)} L';
-  return '${ml} ml';
+  return '$ml ml';
 }

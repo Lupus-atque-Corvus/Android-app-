@@ -270,7 +270,11 @@ class _SymptomEntryState extends State<_SymptomEntry> {
                 label: Text(s),
                 selected: _selected.contains(s),
                 onSelected: (v) => setState(() {
-                  if (v) _selected.add(s); else _selected.remove(s);
+                  if (v) {
+                    _selected.add(s);
+                  } else {
+                    _selected.remove(s);
+                  }
                 }),
               )).toList(),
             ),
