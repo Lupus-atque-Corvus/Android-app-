@@ -135,4 +135,7 @@ class PreferencesRepository {
       _prefs.getString('water_reminder_interval') ?? '120';
   Future<void> setWaterReminderInterval(String v) =>
       _prefs.setString('water_reminder_interval', v);
+
+  // ── Data management ─────────────────────────────────────────────────────────
+  Future<void> clearAll() => _prefs.clear();
 }

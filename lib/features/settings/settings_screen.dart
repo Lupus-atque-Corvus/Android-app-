@@ -535,7 +535,7 @@ class _NavSlotsEditor extends ConsumerWidget {
                 final updated = List<String>.from(displaySlots);
                 final item = updated.removeAt(oldIndex);
                 updated.insert(newIndex, item);
-                await prefs.setNavSlots(updated);
+                await prefs.setNavSlots(jsonEncode(updated));
               },
               children: [
                 for (final slot in displaySlots)

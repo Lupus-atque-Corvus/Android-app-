@@ -7,6 +7,7 @@ import 'data/database/traum_database.dart';
 import 'data/repositories/exercise_seeder.dart';
 import 'data/repositories/supplement_seeder.dart';
 import 'data/repositories/medication_seeder.dart';
+import 'core/notifications/notification_service.dart';
 import 'widget/widget_data_service.dart';
 
 void main() async {
@@ -15,7 +16,10 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final db = TraumDatabase();
 
-  await WidgetDataService.init();
+  await Future.wait([
+    WidgetDataService.init(),
+    NotificationService.init(),
+  ]);
 
   await Future.wait([
     ExerciseSeeder.seedIfNeeded(db),
