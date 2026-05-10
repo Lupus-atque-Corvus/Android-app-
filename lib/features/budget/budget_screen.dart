@@ -40,7 +40,6 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final repo = ref.watch(budgetRepositoryProvider);
     final currency = ref.watch(currencySymbolProvider);
 
     final transactionsAsync = ref.watch(
