@@ -1,0 +1,5 @@
+[
+  {"name": "Omega-3 (Fischöl)", "category": "omega", "dosageAmount": "2", "dosageUnit": "g", "timings": ["morning"], "notes": "EPA und DHA, mit Mahlzeit einnehmen für bessere Absorption."},
+  {"name": "Algen-Omega-3 (vegan)", "category": "omega", "dosageAmount": "500", "dosageUnit": "mg", "timings": ["morning"], "notes": "Pflanzliche DHA-Quelle, ideal für Veganer."},
+  {"name": "Leinöl", "category": "omega", "dosageAmount": "15", "dosageUnit": "ml", "timings": ["morning"], "notes": "ALA-Quelle, in Smoothie oder auf Salat."}
+]

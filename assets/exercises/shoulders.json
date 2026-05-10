@@ -1,0 +1,9 @@
+[
+  {"name": "Schulterdrücken (Langhantel)", "muscleGroup": "shoulders", "equipment": "barbell", "instructions": "Stange auf Schulterhöhe, senkrecht nach oben drücken."},
+  {"name": "Schulterdrücken (Kurzhantel)", "muscleGroup": "shoulders", "equipment": "dumbbell", "instructions": "Kurzhanteln auf Schulterhöhe, gleichzeitig nach oben drücken."},
+  {"name": "Seitheben", "muscleGroup": "shoulders", "equipment": "dumbbell", "instructions": "Arme leicht gebeugt, Kurzhanteln seitlich bis Schulterniveau heben."},
+  {"name": "Vorgebeugtes Seitheben", "muscleGroup": "shoulders", "equipment": "dumbbell", "instructions": "Oberkörper parallel zum Boden, Kurzhanteln seitlich bis Schulterniveau heben (hinterer Deltakopf)."},
+  {"name": "Arnold Press", "muscleGroup": "shoulders", "equipment": "dumbbell", "instructions": "Kurzhanteln auf Augenhöhe, beim Drücken nach oben rotieren."},
+  {"name": "Face Pulls", "muscleGroup": "shoulders", "equipment": "cable", "instructions": "Kabel auf Augenhöhe, Seil zum Gesicht ziehen und Ellbogen weit nach außen führen."},
+  {"name": "Frontanheben", "muscleGroup": "shoulders", "equipment": "dumbbell", "instructions": "Kurzhanteln abwechselnd oder gleichzeitig nach vorne bis Schulterniveau heben."}
+]

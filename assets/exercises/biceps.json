@@ -1,0 +1,8 @@
+[
+  {"name": "Langhantel Curls", "muscleGroup": "biceps", "equipment": "barbell", "instructions": "Stange schulterbreit greifen, Ellbogen an den Körper, Stange zur Schulter curlen."},
+  {"name": "Kurzhantel Curls", "muscleGroup": "biceps", "equipment": "dumbbell", "instructions": "Alternierend oder gleichzeitig, Kurzhanteln zur Schulter curlen."},
+  {"name": "Hammer Curls", "muscleGroup": "biceps", "equipment": "dumbbell", "instructions": "Neutraler Griff (Daumen oben), Kurzhantel zur Schulter curlen."},
+  {"name": "Konzentrationscurls", "muscleGroup": "biceps", "equipment": "dumbbell", "instructions": "Sitzen, Ellbogen auf Innenschenkel abstützen und Kurzhantel curlen."},
+  {"name": "Kabel Curls", "muscleGroup": "biceps", "equipment": "cable", "instructions": "Niedrige Kabelrolle, Stange oder Seil zur Schulter ziehen."},
+  {"name": "Scottcurls", "muscleGroup": "biceps", "equipment": "barbell", "instructions": "Auf der Scottbank, Ellbogen abgestützt, Stange zur Schulter curlen."}
+]

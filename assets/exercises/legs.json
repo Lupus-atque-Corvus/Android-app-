@@ -1,0 +1,10 @@
+[
+  {"name": "Kniebeugen", "muscleGroup": "legs", "equipment": "barbell", "instructions": "Füße schulterbreit, Stange auf den Trapezius, tief in die Kniebeuge gehen."},
+  {"name": "Beinpresse", "muscleGroup": "legs", "equipment": "machine", "instructions": "Füße hüftbreit auf der Plattform, Gewicht kontrolliert senken und drücken."},
+  {"name": "Rumänisches Kreuzheben", "muscleGroup": "legs", "equipment": "barbell", "instructions": "Hüfte nach hinten schieben, Rücken gerade, Stange an den Schienbeinen entlang senken."},
+  {"name": "Ausfallschritte", "muscleGroup": "legs", "equipment": "dumbbell", "instructions": "Großen Schritt nach vorne, hinteres Knie fast auf den Boden, zurück."},
+  {"name": "Beinstrecker", "muscleGroup": "legs", "equipment": "machine", "instructions": "An der Maschine, Beine strecken bis Quadrizeps maximal kontrahiert."},
+  {"name": "Beinbeuger", "muscleGroup": "legs", "equipment": "machine", "instructions": "Bauchlage, Beine zur Gesäßmuskulatur curlen."},
+  {"name": "Wadenheben", "muscleGroup": "legs", "equipment": "machine", "instructions": "Auf den Fußballen stehen, Fersen so weit wie möglich heben."},
+  {"name": "Goblet Squat", "muscleGroup": "legs", "equipment": "dumbbell", "instructions": "Kurzhantel vor der Brust halten, tiefe Kniebeuge ausführen."}
+]

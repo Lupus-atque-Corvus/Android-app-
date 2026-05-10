@@ -1,0 +1,10 @@
+[
+  {"name": "Bankdrücken", "muscleGroup": "chest", "equipment": "barbell", "instructions": "Flach auf der Bank liegen, Stange schulterbreit greifen, langsam zur Brust senken und explosiv drücken."},
+  {"name": "Langhantel Schrägbankdrücken", "muscleGroup": "chest", "equipment": "barbell", "instructions": "Bank auf 30–45 Grad einstellen, Stange über obere Brust drücken."},
+  {"name": "Kurzhantel Fliegende", "muscleGroup": "chest", "equipment": "dumbbell", "instructions": "Arme leicht gebeugt, Kurzhanteln seitlich absenken und über der Brust zusammenführen."},
+  {"name": "Liegestütze", "muscleGroup": "chest", "equipment": "bodyweight", "instructions": "Hände etwas breiter als Schulterbreite, Körper gerade halten und Brust bis kurz vor den Boden absenken."},
+  {"name": "Kabelfliegende", "muscleGroup": "chest", "equipment": "cable", "instructions": "Kabelzüge auf Schulterhöhe, Arme im Bogen vor der Brust zusammenführen."},
+  {"name": "Dips (Brust)", "muscleGroup": "chest", "equipment": "bodyweight", "instructions": "Oberkörper leicht nach vorne lehnen, bis Oberarme parallel zum Boden abstoßen."},
+  {"name": "Pec-Deck", "muscleGroup": "chest", "equipment": "machine", "instructions": "An der Maschine sitzen, Arme seitlich auf die Polster legen und vor der Brust zusammenführen."},
+  {"name": "Kurzhantel Schrägbankdrücken", "muscleGroup": "chest", "equipment": "dumbbell", "instructions": "Bank auf 30–45 Grad, Kurzhanteln über obere Brust drücken."}
+]

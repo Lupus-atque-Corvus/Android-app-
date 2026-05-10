@@ -1,0 +1,8 @@
+[
+  {"name": "Vitamin D3", "category": "vitamins", "dosageAmount": "2000", "dosageUnit": "IE", "timings": ["morning"], "notes": "Mit einer fetthaltigen Mahlzeit einnehmen für bessere Absorption."},
+  {"name": "Vitamin C", "category": "vitamins", "dosageAmount": "500", "dosageUnit": "mg", "timings": ["morning", "evening"], "notes": "Antioxidans, unterstützt Immunsystem."},
+  {"name": "Vitamin B-Komplex", "category": "vitamins", "dosageAmount": "1", "dosageUnit": "Tablette", "timings": ["morning"], "notes": "Am besten morgens mit dem Frühstück."},
+  {"name": "Vitamin K2", "category": "vitamins", "dosageAmount": "100", "dosageUnit": "µg", "timings": ["morning"], "notes": "Zusammen mit Vitamin D3 für Calciumverwertung."},
+  {"name": "Vitamin E", "category": "vitamins", "dosageAmount": "400", "dosageUnit": "IE", "timings": ["morning"], "notes": "Mit Mahlzeit einnehmen."},
+  {"name": "Vitamin A", "category": "vitamins", "dosageAmount": "800", "dosageUnit": "µg", "timings": ["morning"], "notes": "Fettlöslich, mit Mahlzeit einnehmen."}
+]

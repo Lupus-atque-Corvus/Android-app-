@@ -1,0 +1,8 @@
+[
+  {"name": "Magnesium", "category": "minerals", "dosageAmount": "300", "dosageUnit": "mg", "timings": ["evening"], "notes": "Abends einnehmen, fördert Schlaf und Muskelentspannung."},
+  {"name": "Zink", "category": "minerals", "dosageAmount": "15", "dosageUnit": "mg", "timings": ["evening"], "notes": "Nicht zusammen mit Kalzium einnehmen."},
+  {"name": "Kalzium", "category": "minerals", "dosageAmount": "500", "dosageUnit": "mg", "timings": ["morning", "evening"], "notes": "In kleinen Dosen besser absorbiert."},
+  {"name": "Eisen", "category": "minerals", "dosageAmount": "14", "dosageUnit": "mg", "timings": ["morning"], "notes": "Mit Vitamin C einnehmen für bessere Aufnahme."},
+  {"name": "Selen", "category": "minerals", "dosageAmount": "55", "dosageUnit": "µg", "timings": ["morning"], "notes": "Antioxidans, unterstützt Schilddrüse."},
+  {"name": "Kalium", "category": "minerals", "dosageAmount": "500", "dosageUnit": "mg", "timings": ["morning"], "notes": "Elektrolyt, wichtig für Herzfunktion."}
+]

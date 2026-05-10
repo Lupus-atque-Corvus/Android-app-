@@ -1,0 +1,6 @@
+[
+  {"name": "Whey Protein", "category": "protein", "dosageAmount": "30", "dosageUnit": "g", "timings": ["post_workout"], "notes": "Schnell verdauliches Protein, ideal nach dem Training."},
+  {"name": "Casein Protein", "category": "protein", "dosageAmount": "30", "dosageUnit": "g", "timings": ["evening"], "notes": "Langsam verdauliches Protein, ideal vor dem Schlafen."},
+  {"name": "Veganes Protein (Erbse)", "category": "protein", "dosageAmount": "30", "dosageUnit": "g", "timings": ["post_workout"], "notes": "Pflanzliche Alternative mit hohem BCAA-Gehalt."},
+  {"name": "Kollagen Protein", "category": "protein", "dosageAmount": "10", "dosageUnit": "g", "timings": ["morning"], "notes": "Unterstützt Gelenke, Haut und Bindegewebe."}
+]
