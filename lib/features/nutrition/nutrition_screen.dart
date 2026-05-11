@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/components/components.dart';
-import '../../core/providers/repository_providers.dart';
+import '../../core/providers/repository_providers.dart' show nutritionRepositoryProvider, todayWaterLogsProvider;
 import '../../core/providers/preferences_provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/navigation/routes.dart';
 import '../../core/theme/colors.dart';
 import 'package:drift/drift.dart' show Value;
@@ -15,14 +16,7 @@ import '../../data/database/traum_database.dart';
 
 final _nutritionLogsProvider =
     StreamProvider.autoDispose<List<NutritionLog>>((ref) {
-  final today = DateTime.now();
-  return ref.watch(nutritionRepositoryProvider).watchLogsForDay(today);
-});
-
-final _waterLogsProvider =
-    StreamProvider.autoDispose<List<WaterLog>>((ref) {
-  final today = DateTime.now();
-  return ref.watch(nutritionRepositoryProvider).watchWaterLogsForDay(today);
+  return ref.watch(nutritionRepositoryProvider).watchLogsForDay(DateTime.now());
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -42,7 +36,7 @@ class NutritionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final logsAsync = ref.watch(_nutritionLogsProvider);
-    final waterAsync = ref.watch(_waterLogsProvider);
+    final waterAsync = ref.watch(todayWaterLogsProvider);
     final kcalGoal = ref.watch(kcalGoalProvider);
     final proteinGoal = ref.watch(proteinGoalGProvider);
     final waterGoal = ref.watch(waterGoalMlProvider);
@@ -51,7 +45,7 @@ class NutritionScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ernährung'),
+        title: Text(AppLocalizations.of(context).nutritionTitle),
       ),
       body: Stack(
         children: [
@@ -62,7 +56,7 @@ class NutritionScreen extends ConsumerWidget {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     // ── Heute ─────────────────────────────────────────────────
-                    const SectionHeader(title: 'Heute'),
+                    SectionHeader(title: AppLocalizations.of(context).homeTodayLabel),
                     const SizedBox(height: 10),
 
                     // Macro summary card
@@ -146,7 +140,7 @@ class NutritionScreen extends ConsumerWidget {
             right: 16,
             bottom: 16,
             child: GradientButton(
-              label: 'Lebensmittel hinzufügen',
+              label: AppLocalizations.of(context).nutritionAddMeal,
               icon: Icons.add,
               onPressed: () => _showAddFoodDialog(context, ref),
             ),

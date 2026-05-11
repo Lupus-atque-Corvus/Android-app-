@@ -4,6 +4,7 @@ import 'package:drift/drift.dart' show Value;
 import '../../core/components/components.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../core/theme/colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 
 final _supplementsProvider = StreamProvider<List<Supplement>>((ref) {
@@ -19,7 +20,7 @@ class SupplementScreen extends ConsumerWidget {
     final supplementsAsync = ref.watch(_supplementsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Supplemente')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).supplementTitle)),
       body: supplementsAsync.when(
         data: (supplements) => supplements.isEmpty
             ? Center(

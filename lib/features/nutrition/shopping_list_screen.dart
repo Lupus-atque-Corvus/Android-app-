@@ -4,6 +4,7 @@ import 'package:drift/drift.dart' show Value;
 import '../../core/components/components.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../core/theme/colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 
 final _shoppingListProvider = StreamProvider<List<ShoppingListItem>>((ref) {
@@ -19,7 +20,7 @@ class ShoppingListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Einkaufsliste'),
+        title: Text(AppLocalizations.of(context).nutritionShoppingList),
         actions: [
           IconButton(
             onPressed: () async {

@@ -5,6 +5,7 @@ import 'package:drift/drift.dart' show Value;
 import '../../core/components/components.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../core/theme/colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 
 final _medicationsProvider = StreamProvider<List<Medication>>((ref) {
@@ -24,7 +25,7 @@ class MedicationScreen extends ConsumerWidget {
     final logsAsync = ref.watch(_todayMedLogsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Medikamente')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).medicationTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

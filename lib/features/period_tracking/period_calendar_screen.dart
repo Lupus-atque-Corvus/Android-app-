@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../core/providers/preferences_provider.dart';
 import '../../core/theme/colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 import 'cycle_calculator.dart' as cc;
 
@@ -24,7 +25,7 @@ class _PeriodCalendarScreenState extends ConsumerState<PeriodCalendarScreen> {
     final avgPeriod = ref.watch(preferencesRepositoryProvider).avgPeriodLength;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Zykluskalender')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).periodCalendar)),
       body: entriesAsync.when(
         data: (entries) => _buildCalendar(entries, avgCycle, avgPeriod),
         loading: () => const Center(child: CircularProgressIndicator()),

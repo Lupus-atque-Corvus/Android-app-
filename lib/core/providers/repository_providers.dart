@@ -8,6 +8,7 @@ import '../../data/repositories/medication_repository.dart';
 import '../../data/repositories/abstinence_repository.dart';
 import '../../data/repositories/budget_repository.dart';
 import '../../data/repositories/period_repository.dart';
+import '../../data/database/traum_database.dart';
 import 'database_provider.dart';
 
 final planningRepositoryProvider = Provider(
@@ -45,3 +46,16 @@ final budgetRepositoryProvider = Provider(
 final periodRepositoryProvider = Provider(
   (ref) => PeriodRepository(ref.watch(periodDaoProvider)),
 );
+
+// ── Shared water provider — used by both HomeScreen and NutritionScreen ───────
+final todayWaterLogsProvider = StreamProvider<List<WaterLog>>((ref) {
+  return ref
+      .watch(nutritionRepositoryProvider)
+      .watchWaterLogsForDay(DateTime.now());
+});
+
+final todayWaterMlProvider = Provider<AsyncValue<int>>((ref) {
+  return ref
+      .watch(todayWaterLogsProvider)
+      .whenData((logs) => logs.fold(0, (sum, l) => sum + l.amountMl));
+});

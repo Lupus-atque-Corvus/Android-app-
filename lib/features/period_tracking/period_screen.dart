@@ -7,6 +7,7 @@ import '../../core/providers/preferences_provider.dart';
 import '../../core/navigation/routes.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/date_utils.dart' as traum_dates;
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 import 'cycle_calculator.dart' as cc;
 
@@ -25,7 +26,7 @@ class PeriodScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Zyklus'),
+        title: Text(AppLocalizations.of(context).periodTitle),
         actions: [
           IconButton(
             onPressed: () => context.push(Routes.periodCalendar),

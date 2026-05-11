@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/components/components.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../core/theme/colors.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:drift/drift.dart' show Value;
 import '../../data/database/traum_database.dart';
 
@@ -38,7 +39,7 @@ class _HealthScreenState extends ConsumerState<HealthScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gesundheit'),
+        title: Text(AppLocalizations.of(context).healthTitle),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,

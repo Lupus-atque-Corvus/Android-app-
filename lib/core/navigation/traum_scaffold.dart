@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/preferences_provider.dart';
+import '../../l10n/app_localizations.dart';
 import 'routes.dart';
 
 class _ModuleInfo {
@@ -56,6 +57,21 @@ class TraumScaffold extends ConsumerWidget {
   }
 }
 
+String _navLabel(AppLocalizations l10n, String key) => switch (key) {
+  'navHome' => l10n.navHome,
+  'navTraining' => l10n.navTraining,
+  'navHealth' => l10n.navHealth,
+  'navNutrition' => l10n.navNutrition,
+  'navPlanning' => l10n.navPlanning,
+  'navSupplements' => l10n.navSupplements,
+  'navMedication' => l10n.navMedication,
+  'navAbstinence' => l10n.navAbstinence,
+  'navBudget' => l10n.navBudget,
+  'navPeriod' => l10n.navPeriod,
+  'navSettings' => l10n.navSettings,
+  _ => key,
+};
+
 class _TraumBottomNav extends StatelessWidget {
   const _TraumBottomNav({
     required this.slots,
@@ -77,7 +93,7 @@ class _TraumBottomNav extends StatelessWidget {
         items: slots.map((m) {
           return BottomNavigationBarItem(
             icon: Icon(m.icon),
-            label: m.key,
+            label: _navLabel(AppLocalizations.of(context), m.labelKey),
           );
         }).toList(),
       ),

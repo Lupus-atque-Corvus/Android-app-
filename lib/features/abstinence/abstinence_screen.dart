@@ -6,6 +6,7 @@ import '../../core/components/components.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/formatters.dart';
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 
 final _trackersProvider = StreamProvider<List<AbstinenceTracker>>((ref) {
@@ -20,7 +21,7 @@ class AbstinenceScreen extends ConsumerWidget {
     final trackersAsync = ref.watch(_trackersProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Abstinenz')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).abstinenceTitle)),
       body: trackersAsync.when(
         data: (trackers) => trackers.isEmpty
             ? Center(

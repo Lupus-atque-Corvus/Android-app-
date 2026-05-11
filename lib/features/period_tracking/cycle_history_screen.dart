@@ -5,6 +5,7 @@ import '../../core/components/components.dart';
 import '../../core/providers/repository_providers.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/date_utils.dart' as traum_dates;
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 
 class CycleHistoryScreen extends ConsumerWidget {
@@ -17,7 +18,7 @@ class CycleHistoryScreen extends ConsumerWidget {
     }));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Zyklushistorie')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).periodMyCycles)),
       body: entriesAsync.when(
         data: (entries) {
           if (entries.isEmpty) {

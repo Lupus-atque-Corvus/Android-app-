@@ -1,5 +1,34 @@
 import 'package:flutter/material.dart';
 
+const _motivationQuotes = [
+  'Mach heute etwas Großartiges',
+  'Jeder Tag ist ein neuer Anfang',
+  'Du schaffst das',
+  'Bleib fokussiert',
+  'Dein bestes Leben beginnt jetzt',
+  'Kleine Schritte führen zu großen Zielen',
+  'Glaube an dich selbst',
+  'Heute ist dein Tag',
+  'Wachse über dich hinaus',
+  'Mach den ersten Schritt',
+  'Stärke wächst durch Ausdauer',
+  'Du bist stärker als du denkst',
+  'Energie folgt der Aufmerksamkeit',
+  'Sei die beste Version von dir',
+  'Fortschritt schlägt Perfektion',
+  'Jeder Moment zählt',
+  'Halte niemals auf zu träumen',
+  'Disziplin ist die Brücke zu deinen Zielen',
+  'Investiere in dich selbst',
+  'Das Beste kommt noch',
+];
+
+String dailyMotivation() {
+  final now = DateTime.now();
+  final dayOfYear = now.difference(DateTime(now.year)).inDays;
+  return _motivationQuotes[dayOfYear % _motivationQuotes.length];
+}
+
 String greeting(String name) {
   final hour = TimeOfDay.now().hour;
   if (hour >= 5 && hour < 12) return 'Guten Morgen, $name';

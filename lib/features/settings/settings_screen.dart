@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -20,13 +21,14 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final prefs = ref.watch(preferencesRepositoryProvider);
     final themeMode = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Einstellungen')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         children: [
           // ── Erscheinungsbild ───────────────────────────────────────────────
-          _SectionHeader('Erscheinungsbild'),
+          _SectionHeader(l10n.settingsAppearance),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: SegmentedButton<ThemeMode>(
@@ -48,16 +50,16 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // ── Sprache ────────────────────────────────────────────────────────
-          _SectionHeader('Sprache'),
+          _SectionHeader(l10n.settingsLanguage),
           ListTile(
-            title: const Text('App-Sprache'),
+            title: Text(l10n.settingsLanguage),
             subtitle: Text(ref.watch(localeProvider)?.languageCode ?? 'Systemsprache'),
             trailing: const Icon(Icons.language_rounded),
             onTap: () => _showLanguagePicker(context, ref),
           ),
 
           // ── Einheiten ──────────────────────────────────────────────────────
-          _SectionHeader('Einheiten'),
+          _SectionHeader(l10n.settingsUnits),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: SegmentedButton<String>(
@@ -71,9 +73,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // ── Benachrichtigungen ─────────────────────────────────────────────
-          _SectionHeader('Benachrichtigungen'),
+          _SectionHeader(l10n.settingsNotifications),
           SwitchListTile(
-            title: const Text('Medikamenten-Erinnerung'),
+            title: Text(l10n.notifMedication),
             value: prefs.notifMedication,
             onChanged: (v) async {
               await prefs.setNotifMedication(v);
@@ -81,7 +83,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           SwitchListTile(
-            title: const Text('Supplement-Erinnerung'),
+            title: Text(l10n.notifSupplement),
             value: prefs.notifSupplement,
             onChanged: (v) async {
               await prefs.setNotifSupplement(v);
@@ -89,7 +91,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           SwitchListTile(
-            title: const Text('Training-Erinnerung'),
+            title: Text(l10n.notifWorkout),
             value: prefs.notifWorkout,
             onChanged: (v) async {
               await prefs.setNotifWorkout(v);
@@ -97,7 +99,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           SwitchListTile(
-            title: const Text('Wasser-Erinnerung'),
+            title: Text(l10n.notifWater),
             value: prefs.notifWater,
             onChanged: (v) async {
               await prefs.setNotifWater(v);
@@ -105,7 +107,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           SwitchListTile(
-            title: const Text('Todo-Fälligkeiten'),
+            title: Text(l10n.notifTodo),
             value: prefs.notifTodo,
             onChanged: (v) async {
               await prefs.setNotifTodo(v);
@@ -113,7 +115,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           SwitchListTile(
-            title: const Text('Gewohnheiten'),
+            title: Text(l10n.notifHabit),
             value: prefs.notifHabit,
             onChanged: (v) async {
               await prefs.setNotifHabit(v);
@@ -121,13 +123,13 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           SwitchListTile(
-            title: const Text('Zykluserinnerungen'),
+            title: Text(l10n.notifPeriod),
             value: prefs.notifPeriod,
             onChanged: (v) => prefs.setNotifPeriod(v),
           ),
 
           // ── Ziele ─────────────────────────────────────────────────────────
-          _SectionHeader('Ziele'),
+          _SectionHeader(l10n.planningGoals),
           ListTile(
             title: const Text('Schritte/Tag'),
             subtitle: Text('${prefs.stepsGoal}'),
@@ -135,39 +137,39 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _showIntEdit(context, 'Schritte/Tag', prefs.stepsGoal, 1000, 50000, prefs.setStepsGoal),
           ),
           ListTile(
-            title: const Text('Wasserziel (ml)'),
+            title: Text(l10n.onboardingWaterGoal),
             subtitle: Text('${prefs.waterGoalMl} ml'),
             trailing: const Icon(Icons.edit_outlined),
-            onTap: () => _showIntEdit(context, 'Wasser (ml)', prefs.waterGoalMl, 500, 6000, prefs.setWaterGoalMl),
+            onTap: () => _showIntEdit(context, l10n.onboardingWaterGoal, prefs.waterGoalMl, 500, 6000, prefs.setWaterGoalMl),
           ),
           ListTile(
-            title: const Text('Kalorienziel (kcal)'),
+            title: Text(l10n.onboardingCalorieGoal),
             subtitle: Text('${prefs.kcalGoal} kcal'),
             trailing: const Icon(Icons.edit_outlined),
-            onTap: () => _showIntEdit(context, 'Kalorien', prefs.kcalGoal, 800, 6000, prefs.setKcalGoal),
+            onTap: () => _showIntEdit(context, l10n.onboardingCalorieGoal, prefs.kcalGoal, 800, 6000, prefs.setKcalGoal),
           ),
 
           // ── Datenschutz & Sicherheit ───────────────────────────────────────
-          _SectionHeader('Datenschutz & Sicherheit'),
+          _SectionHeader(l10n.settingsPrivacy),
           SwitchListTile(
-            title: const Text('Biometrische Sperre'),
+            title: Text(l10n.settingsPinBiometric),
             subtitle: const Text('Face ID / Fingerabdruck beim Start'),
             value: prefs.biometricLockEnabled,
             onChanged: (v) => _toggleBiometric(context, prefs, v),
           ),
           ListTile(
-            title: const Text('Daten exportieren (JSON)'),
+            title: Text(l10n.settingsExportData),
             leading: const Icon(Icons.upload_outlined),
             onTap: () => _exportJson(context),
           ),
           ListTile(
-            title: const Text('Backup erstellen (.zip)'),
+            title: Text(l10n.settingsBackup),
             leading: const Icon(Icons.backup_outlined),
             onTap: () => _createBackup(context),
           ),
 
           // ── Wetter ────────────────────────────────────────────────────────
-          _SectionHeader('Wetter'),
+          _SectionHeader(l10n.settingsWeather),
           ListTile(
             title: const Text('Standort automatisch ermitteln'),
             leading: const Icon(Icons.my_location_rounded),
@@ -183,19 +185,19 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // ── Navigation ────────────────────────────────────────────────────
-          _SectionHeader('Navigation (5 Slots)'),
+          _SectionHeader(l10n.settingsNavigation),
           _NavSlotsEditor(prefs: prefs),
 
           // ── Zyklus ────────────────────────────────────────────────────────
-          _SectionHeader('Zyklus'),
+          _SectionHeader(l10n.settingsPeriodTracking),
           SwitchListTile(
-            title: const Text('Zyklusanalyse aktivieren'),
+            title: Text(l10n.settingsPeriodTracking),
             value: prefs.isPeriodTrackingEnabled,
             onChanged: (v) => prefs.setIsPeriodTrackingEnabled(v),
           ),
 
           // ── Budget ────────────────────────────────────────────────────────
-          _SectionHeader('Budget'),
+          _SectionHeader(l10n.budgetTitle),
           ListTile(
             title: const Text('Währungssymbol'),
             subtitle: Text(prefs.currencySymbol),
@@ -204,18 +206,18 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           // ── Homescreen-Widgets ────────────────────────────────────────────
-          _SectionHeader('Homescreen-Widgets'),
+          _SectionHeader(l10n.settingsWidgets),
           const _WidgetGalleryTile(),
 
           // ── Konto ─────────────────────────────────────────────────────────
-          _SectionHeader('Konto'),
+          _SectionHeader(l10n.settingsAccount),
           ListTile(
-            title: const Text('App-Version'),
+            title: Text(l10n.settingsVersion),
             leading: const Icon(Icons.info_outline_rounded),
             trailing: const _VersionText(),
           ),
           ListTile(
-            title: const Text('Onboarding zurücksetzen'),
+            title: Text(l10n.settingsResetOnboarding),
             leading: const Icon(Icons.restart_alt_rounded),
             onTap: () async {
               final confirm = await showDialog<bool>(
@@ -233,15 +235,15 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           ListTile(
-            title: const Text('Alle Daten löschen', style: TextStyle(color: TraumColors.error)),
+            title: Text(l10n.settingsDeleteAllData, style: const TextStyle(color: TraumColors.error)),
             leading: const Icon(Icons.delete_forever_rounded, color: TraumColors.error),
             onTap: () => _deleteAllData(context, prefs),
           ),
 
           // ── Support ───────────────────────────────────────────────────────
-          _SectionHeader('Support'),
+          _SectionHeader(l10n.settingsSupport),
           ListTile(
-            title: const Text('Fehler melden'),
+            title: Text(l10n.supportBugReport),
             leading: const Icon(Icons.bug_report_outlined),
             onTap: _sendFeedbackMail,
           ),

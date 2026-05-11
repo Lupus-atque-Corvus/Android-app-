@@ -5,6 +5,7 @@ import '../../core/providers/repository_providers.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/streak.dart';
 import '../../core/utils/date_utils.dart' as traum_dates;
+import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 
 // ── Providers ─────────────────────────────────────────────────────────────────
@@ -54,7 +55,7 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> with SingleTick
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Planung'),
+        title: Text(AppLocalizations.of(context).planningTitle),
         bottom: TabBar(
           controller: _tab,
           tabs: const [
