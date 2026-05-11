@@ -1,4 +1,5 @@
 export 'traum_card.dart';
+export 'traum_navigation_bar.dart';
 export 'gradient_button.dart';
 export 'gradient_progress_bar.dart';
 export 'circular_progress_ring.dart';
