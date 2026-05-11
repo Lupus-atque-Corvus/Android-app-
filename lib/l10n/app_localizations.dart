@@ -1917,6 +1917,84 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Präbiotika'**
   String get supplement_prebiotics;
+
+  /// No description provided for @weatherClear.
+  ///
+  /// In de, this message translates to:
+  /// **'Klar'**
+  String get weatherClear;
+
+  /// No description provided for @weatherMostlyClear.
+  ///
+  /// In de, this message translates to:
+  /// **'Überwiegend klar'**
+  String get weatherMostlyClear;
+
+  /// No description provided for @weatherPartlyCloudy.
+  ///
+  /// In de, this message translates to:
+  /// **'Teilweise bewölkt'**
+  String get weatherPartlyCloudy;
+
+  /// No description provided for @weatherOvercast.
+  ///
+  /// In de, this message translates to:
+  /// **'Bewölkt'**
+  String get weatherOvercast;
+
+  /// No description provided for @weatherFoggy.
+  ///
+  /// In de, this message translates to:
+  /// **'Neblig'**
+  String get weatherFoggy;
+
+  /// No description provided for @weatherDrizzle.
+  ///
+  /// In de, this message translates to:
+  /// **'Nieselregen'**
+  String get weatherDrizzle;
+
+  /// No description provided for @weatherRain.
+  ///
+  /// In de, this message translates to:
+  /// **'Regen'**
+  String get weatherRain;
+
+  /// No description provided for @weatherSnowfall.
+  ///
+  /// In de, this message translates to:
+  /// **'Schneefall'**
+  String get weatherSnowfall;
+
+  /// No description provided for @weatherSnowGrains.
+  ///
+  /// In de, this message translates to:
+  /// **'Schneegriesel'**
+  String get weatherSnowGrains;
+
+  /// No description provided for @weatherRainShowers.
+  ///
+  /// In de, this message translates to:
+  /// **'Regenschauer'**
+  String get weatherRainShowers;
+
+  /// No description provided for @weatherSnowShowers.
+  ///
+  /// In de, this message translates to:
+  /// **'Schneeschauer'**
+  String get weatherSnowShowers;
+
+  /// No description provided for @weatherThunderstorm.
+  ///
+  /// In de, this message translates to:
+  /// **'Gewitter'**
+  String get weatherThunderstorm;
+
+  /// No description provided for @weatherHeavyThunderstorm.
+  ///
+  /// In de, this message translates to:
+  /// **'Starkes Gewitter'**
+  String get weatherHeavyThunderstorm;
 }
 
 class _AppLocalizationsDelegate

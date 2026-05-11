@@ -300,5 +300,19 @@
   "supplement_beta_alanine": "Beta-Alanine",
   "supplement_citrulline": "Citrulline",
   "supplement_probiotics": "Probiotics",
-  "supplement_prebiotics": "Prebiotics"
+  "supplement_prebiotics": "Prebiotics",
+
+  "weatherClear": "Clear",
+  "weatherMostlyClear": "Mostly clear",
+  "weatherPartlyCloudy": "Partly cloudy",
+  "weatherOvercast": "Overcast",
+  "weatherFoggy": "Foggy",
+  "weatherDrizzle": "Drizzle",
+  "weatherRain": "Rain",
+  "weatherSnowfall": "Snowfall",
+  "weatherSnowGrains": "Snow grains",
+  "weatherRainShowers": "Rain showers",
+  "weatherSnowShowers": "Snow showers",
+  "weatherThunderstorm": "Thunderstorm",
+  "weatherHeavyThunderstorm": "Heavy thunderstorm"
 }

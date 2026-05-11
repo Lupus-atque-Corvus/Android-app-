@@ -960,4 +960,43 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get supplement_prebiotics => 'Präbiotika';
+
+  @override
+  String get weatherClear => 'Klar';
+
+  @override
+  String get weatherMostlyClear => 'Überwiegend klar';
+
+  @override
+  String get weatherPartlyCloudy => 'Teilweise bewölkt';
+
+  @override
+  String get weatherOvercast => 'Bewölkt';
+
+  @override
+  String get weatherFoggy => 'Neblig';
+
+  @override
+  String get weatherDrizzle => 'Nieselregen';
+
+  @override
+  String get weatherRain => 'Regen';
+
+  @override
+  String get weatherSnowfall => 'Schneefall';
+
+  @override
+  String get weatherSnowGrains => 'Schneegriesel';
+
+  @override
+  String get weatherRainShowers => 'Regenschauer';
+
+  @override
+  String get weatherSnowShowers => 'Schneeschauer';
+
+  @override
+  String get weatherThunderstorm => 'Gewitter';
+
+  @override
+  String get weatherHeavyThunderstorm => 'Starkes Gewitter';
 }

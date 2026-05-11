@@ -170,5 +170,19 @@
   "supplement_ashwagandha": "أشواغاندا", "supplement_rhodiola": "روديولا",
   "supplement_caffeine": "الكافيين", "supplement_beta_alanine": "بيتا-ألانين",
   "supplement_citrulline": "سيترولين", "supplement_probiotics": "البروبيوتيك",
-  "supplement_prebiotics": "البريبيوتيك"
+  "supplement_prebiotics": "البريبيوتيك",
+
+  "weatherClear": "صافٍ",
+  "weatherMostlyClear": "صافٍ في معظمه",
+  "weatherPartlyCloudy": "غائم جزئياً",
+  "weatherOvercast": "غائم",
+  "weatherFoggy": "ضبابي",
+  "weatherDrizzle": "رذاذ",
+  "weatherRain": "مطر",
+  "weatherSnowfall": "تساقط الثلوج",
+  "weatherSnowGrains": "حبيبات الثلج",
+  "weatherRainShowers": "زخات مطر",
+  "weatherSnowShowers": "زخات ثلج",
+  "weatherThunderstorm": "عاصفة رعدية",
+  "weatherHeavyThunderstorm": "عاصفة رعدية شديدة"
 }

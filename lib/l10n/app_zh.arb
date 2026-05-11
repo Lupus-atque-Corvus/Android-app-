@@ -168,5 +168,19 @@
   "supplement_ashwagandha": "南非醉茄", "supplement_rhodiola": "红景天",
   "supplement_caffeine": "咖啡因", "supplement_beta_alanine": "β-丙氨酸",
   "supplement_citrulline": "瓜氨酸", "supplement_probiotics": "益生菌",
-  "supplement_prebiotics": "益生元"
+  "supplement_prebiotics": "益生元",
+
+  "weatherClear": "晴",
+  "weatherMostlyClear": "大部晴朗",
+  "weatherPartlyCloudy": "局部多云",
+  "weatherOvercast": "多云",
+  "weatherFoggy": "有雾",
+  "weatherDrizzle": "毛毛雨",
+  "weatherRain": "雨",
+  "weatherSnowfall": "降雪",
+  "weatherSnowGrains": "雪粒",
+  "weatherRainShowers": "阵雨",
+  "weatherSnowShowers": "阵雪",
+  "weatherThunderstorm": "雷暴",
+  "weatherHeavyThunderstorm": "强雷暴"
 }

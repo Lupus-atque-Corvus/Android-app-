@@ -959,4 +959,43 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get supplement_prebiotics => 'प्रीबायोटिक्स';
+
+  @override
+  String get weatherClear => 'साफ';
+
+  @override
+  String get weatherMostlyClear => 'अधिकतर साफ';
+
+  @override
+  String get weatherPartlyCloudy => 'आंशिक बादल';
+
+  @override
+  String get weatherOvercast => 'बादलयुक्त';
+
+  @override
+  String get weatherFoggy => 'कोहरा';
+
+  @override
+  String get weatherDrizzle => 'बूंदाबांदी';
+
+  @override
+  String get weatherRain => 'बारिश';
+
+  @override
+  String get weatherSnowfall => 'हिमपात';
+
+  @override
+  String get weatherSnowGrains => 'बर्फ के कण';
+
+  @override
+  String get weatherRainShowers => 'बारिश की फुहारें';
+
+  @override
+  String get weatherSnowShowers => 'बर्फ की फुहारें';
+
+  @override
+  String get weatherThunderstorm => 'आंधी-तूफान';
+
+  @override
+  String get weatherHeavyThunderstorm => 'भारी आंधी-तूफान';
 }

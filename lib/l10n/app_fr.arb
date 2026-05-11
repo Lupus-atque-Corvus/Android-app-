@@ -170,5 +170,19 @@
   "supplement_ashwagandha": "Ashwagandha", "supplement_rhodiola": "Rhodiola",
   "supplement_caffeine": "Caféine", "supplement_beta_alanine": "Bêta-alanine",
   "supplement_citrulline": "Citrulline", "supplement_probiotics": "Probiotiques",
-  "supplement_prebiotics": "Prébiotiques"
+  "supplement_prebiotics": "Prébiotiques",
+
+  "weatherClear": "Clair",
+  "weatherMostlyClear": "Principalement clair",
+  "weatherPartlyCloudy": "Partiellement nuageux",
+  "weatherOvercast": "Couvert",
+  "weatherFoggy": "Brumeux",
+  "weatherDrizzle": "Bruine",
+  "weatherRain": "Pluie",
+  "weatherSnowfall": "Chutes de neige",
+  "weatherSnowGrains": "Grains de neige",
+  "weatherRainShowers": "Averses",
+  "weatherSnowShowers": "Averses de neige",
+  "weatherThunderstorm": "Orage",
+  "weatherHeavyThunderstorm": "Orage violent"
 }

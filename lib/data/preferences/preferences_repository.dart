@@ -87,6 +87,9 @@ class PreferencesRepository {
     await _prefs.setDouble('weather_lon', lon);
   }
 
+  String? get weatherCityName => _prefs.getString('weather_city');
+  Future<void> setWeatherCityName(String v) => _prefs.setString('weather_city', v);
+
   // ── Biometric lock ──────────────────────────────────────────────────────────
   bool get biometricLockEnabled => _prefs.getBool('biometric_lock') ?? false;
   Future<void> setBiometricLockEnabled(bool v) =>

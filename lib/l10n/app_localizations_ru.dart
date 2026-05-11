@@ -960,4 +960,43 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get supplement_prebiotics => 'Пребиотики';
+
+  @override
+  String get weatherClear => 'Ясно';
+
+  @override
+  String get weatherMostlyClear => 'Преимущественно ясно';
+
+  @override
+  String get weatherPartlyCloudy => 'Переменная облачность';
+
+  @override
+  String get weatherOvercast => 'Пасмурно';
+
+  @override
+  String get weatherFoggy => 'Туман';
+
+  @override
+  String get weatherDrizzle => 'Изморось';
+
+  @override
+  String get weatherRain => 'Дождь';
+
+  @override
+  String get weatherSnowfall => 'Снегопад';
+
+  @override
+  String get weatherSnowGrains => 'Снежная крупа';
+
+  @override
+  String get weatherRainShowers => 'Ливневые дожди';
+
+  @override
+  String get weatherSnowShowers => 'Снежные ливни';
+
+  @override
+  String get weatherThunderstorm => 'Гроза';
+
+  @override
+  String get weatherHeavyThunderstorm => 'Сильная гроза';
 }

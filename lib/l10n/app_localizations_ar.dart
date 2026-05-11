@@ -955,4 +955,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get supplement_prebiotics => 'البريبيوتيك';
+
+  @override
+  String get weatherClear => 'صافٍ';
+
+  @override
+  String get weatherMostlyClear => 'صافٍ في معظمه';
+
+  @override
+  String get weatherPartlyCloudy => 'غائم جزئياً';
+
+  @override
+  String get weatherOvercast => 'غائم';
+
+  @override
+  String get weatherFoggy => 'ضبابي';
+
+  @override
+  String get weatherDrizzle => 'رذاذ';
+
+  @override
+  String get weatherRain => 'مطر';
+
+  @override
+  String get weatherSnowfall => 'تساقط الثلوج';
+
+  @override
+  String get weatherSnowGrains => 'حبيبات الثلج';
+
+  @override
+  String get weatherRainShowers => 'زخات مطر';
+
+  @override
+  String get weatherSnowShowers => 'زخات ثلج';
+
+  @override
+  String get weatherThunderstorm => 'عاصفة رعدية';
+
+  @override
+  String get weatherHeavyThunderstorm => 'عاصفة رعدية شديدة';
 }

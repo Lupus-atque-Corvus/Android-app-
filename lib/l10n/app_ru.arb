@@ -170,5 +170,19 @@
   "supplement_ashwagandha": "Ашваганда", "supplement_rhodiola": "Родиола",
   "supplement_caffeine": "Кофеин", "supplement_beta_alanine": "Бета-аланин",
   "supplement_citrulline": "Цитруллин", "supplement_probiotics": "Пробиотики",
-  "supplement_prebiotics": "Пребиотики"
+  "supplement_prebiotics": "Пребиотики",
+
+  "weatherClear": "Ясно",
+  "weatherMostlyClear": "Преимущественно ясно",
+  "weatherPartlyCloudy": "Переменная облачность",
+  "weatherOvercast": "Пасмурно",
+  "weatherFoggy": "Туман",
+  "weatherDrizzle": "Изморось",
+  "weatherRain": "Дождь",
+  "weatherSnowfall": "Снегопад",
+  "weatherSnowGrains": "Снежная крупа",
+  "weatherRainShowers": "Ливневые дожди",
+  "weatherSnowShowers": "Снежные ливни",
+  "weatherThunderstorm": "Гроза",
+  "weatherHeavyThunderstorm": "Сильная гроза"
 }

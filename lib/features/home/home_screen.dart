@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,11 +6,11 @@ import '../../core/components/components.dart';
 import '../../core/navigation/routes.dart';
 import '../../core/providers/preferences_provider.dart';
 import '../../core/providers/repository_providers.dart';
-import '../../core/providers/weather_provider.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/date_utils.dart' as traum_dates;
 import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
+import 'widgets/clock_weather_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -31,8 +30,8 @@ class HomeScreen extends ConsumerWidget {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   _TopBar(greeting: greet, motivation: motivation, onSettings: () => context.push(Routes.settings)),
-                  const SizedBox(height: 4),
-                  const _ClockCard(),
+                  const SizedBox(height: 12),
+                  const HomeClockWeatherWidget(),
                   const SizedBox(height: 16),
                   _ActivityGrid(),
                   const SizedBox(height: 16),
@@ -97,121 +96,6 @@ class _TopBar extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-// ── Clock card ────────────────────────────────────────────────────────────────
-
-class _ClockCard extends ConsumerStatefulWidget {
-  const _ClockCard();
-
-  @override
-  ConsumerState<_ClockCard> createState() => _ClockCardState();
-}
-
-class _ClockCardState extends ConsumerState<_ClockCard> {
-  late DateTime _now;
-  late Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _now = DateTime.now();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() => _now = DateTime.now());
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final h = _now.hour.toString().padLeft(2, '0');
-    final m = _now.minute.toString().padLeft(2, '0');
-    final s = _now.second.toString().padLeft(2, '0');
-    final date = traum_dates.formatDate(_now);
-    final weatherAsync = ref.watch(weatherProvider);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text('$h:$m', style: Theme.of(context).textTheme.displayLarge),
-            const SizedBox(width: 6),
-            Text(
-              ':$s',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: TraumColors.onBackgroundMuted,
-                  ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Text(
-              date,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: TraumColors.onBackgroundMuted),
-            ),
-            const Spacer(),
-            weatherAsync.when(
-              data: (data) {
-                if (data == null) return const SizedBox.shrink();
-                final (icon, label, color) = _weatherInfo(data.weatherCode);
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(icon, color: color, size: 18),
-                    const SizedBox(width: 5),
-                    Text(
-                      '${data.temperature.round()}°C',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: TraumColors.onBackgroundMuted,
-                          ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      label,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: TraumColors.onBackgroundSubtle,
-                          ),
-                    ),
-                  ],
-                );
-              },
-              loading: () => const SizedBox(
-                width: 14,
-                height: 14,
-                child: CircularProgressIndicator(strokeWidth: 1.5),
-              ),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  static (IconData, String, Color) _weatherInfo(int code) {
-    if (code == 0) return (Icons.wb_sunny_rounded, 'Sonnig', Colors.amber);
-    if (code <= 2) return (Icons.wb_cloudy_rounded, 'Teils bewölkt', Colors.blueGrey);
-    if (code == 3) return (Icons.cloud_rounded, 'Bewölkt', Colors.blueGrey);
-    if (code <= 48) return (Icons.blur_on, 'Nebel', Colors.grey);
-    if (code <= 55) return (Icons.grain, 'Nieselregen', TraumColors.cyanBlue);
-    if (code <= 65) return (Icons.water_drop_rounded, 'Regen', TraumColors.cyanBlue);
-    if (code <= 75) return (Icons.ac_unit_rounded, 'Schnee', Colors.lightBlue);
-    if (code <= 82) return (Icons.umbrella, 'Schauer', TraumColors.cyanBlue);
-    if (code >= 95) return (Icons.bolt_rounded, 'Gewitter', Colors.amber);
-    return (Icons.cloud_outlined, 'Unbekannt', Colors.grey);
   }
 }
 

@@ -950,4 +950,43 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get supplement_prebiotics => '益生元';
+
+  @override
+  String get weatherClear => '晴';
+
+  @override
+  String get weatherMostlyClear => '大部晴朗';
+
+  @override
+  String get weatherPartlyCloudy => '局部多云';
+
+  @override
+  String get weatherOvercast => '多云';
+
+  @override
+  String get weatherFoggy => '有雾';
+
+  @override
+  String get weatherDrizzle => '毛毛雨';
+
+  @override
+  String get weatherRain => '雨';
+
+  @override
+  String get weatherSnowfall => '降雪';
+
+  @override
+  String get weatherSnowGrains => '雪粒';
+
+  @override
+  String get weatherRainShowers => '阵雨';
+
+  @override
+  String get weatherSnowShowers => '阵雪';
+
+  @override
+  String get weatherThunderstorm => '雷暴';
+
+  @override
+  String get weatherHeavyThunderstorm => '强雷暴';
 }

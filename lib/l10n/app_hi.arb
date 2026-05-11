@@ -170,5 +170,19 @@
   "supplement_ashwagandha": "अश्वगंधा", "supplement_rhodiola": "रोडियोला",
   "supplement_caffeine": "कैफीन", "supplement_beta_alanine": "बीटा-अलानिन",
   "supplement_citrulline": "सिट्रुलाइन", "supplement_probiotics": "प्रोबायोटिक्स",
-  "supplement_prebiotics": "प्रीबायोटिक्स"
+  "supplement_prebiotics": "प्रीबायोटिक्स",
+
+  "weatherClear": "साफ",
+  "weatherMostlyClear": "अधिकतर साफ",
+  "weatherPartlyCloudy": "आंशिक बादल",
+  "weatherOvercast": "बादलयुक्त",
+  "weatherFoggy": "कोहरा",
+  "weatherDrizzle": "बूंदाबांदी",
+  "weatherRain": "बारिश",
+  "weatherSnowfall": "हिमपात",
+  "weatherSnowGrains": "बर्फ के कण",
+  "weatherRainShowers": "बारिश की फुहारें",
+  "weatherSnowShowers": "बर्फ की फुहारें",
+  "weatherThunderstorm": "आंधी-तूफान",
+  "weatherHeavyThunderstorm": "भारी आंधी-तूफान"
 }

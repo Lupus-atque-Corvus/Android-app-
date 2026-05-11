@@ -338,5 +338,19 @@
   "supplement_beta_alanine": "Beta-Alanin",
   "supplement_citrulline": "Citrullin",
   "supplement_probiotics": "Probiotika",
-  "supplement_prebiotics": "Präbiotika"
+  "supplement_prebiotics": "Präbiotika",
+
+  "weatherClear": "Klar",
+  "weatherMostlyClear": "Überwiegend klar",
+  "weatherPartlyCloudy": "Teilweise bewölkt",
+  "weatherOvercast": "Bewölkt",
+  "weatherFoggy": "Neblig",
+  "weatherDrizzle": "Nieselregen",
+  "weatherRain": "Regen",
+  "weatherSnowfall": "Schneefall",
+  "weatherSnowGrains": "Schneegriesel",
+  "weatherRainShowers": "Regenschauer",
+  "weatherSnowShowers": "Schneeschauer",
+  "weatherThunderstorm": "Gewitter",
+  "weatherHeavyThunderstorm": "Starkes Gewitter"
 }
