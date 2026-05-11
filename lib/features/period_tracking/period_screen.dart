@@ -41,21 +41,32 @@ class PeriodScreen extends ConsumerWidget {
       body: entriesAsync.when(
         data: (entries) {
           final latest = entries.isNotEmpty ? entries.first : null;
-          CycleCalculation? calc;
+          cc.CycleCalculation? calc;
           if (latest != null) {
-            final result = cc.CycleCalculator.calculate(
+            calc = cc.CycleCalculator.calculate(
               lastPeriodStart: latest.startDate,
               avgCycleLength: avgCycle,
               avgPeriodLength: avgPeriod,
             );
-            calc = CycleCalculation(
-              ovulationDate: result.ovulationDate,
-              fertileStart: result.fertileStart,
-              fertileEnd: result.fertileEnd,
-              nextPeriodPredicted: result.nextPeriodPredicted,
-              pregnancyProbability: result.pregnancyProbability,
-            );
           }
+
+          // Cycle irregularity check from available entries
+          final cycleLengths = <int>[];
+          for (int i = 0; i < entries.length - 1; i++) {
+            final len =
+                entries[i].startDate.difference(entries[i + 1].startDate).inDays;
+            if (len > 0 && len < 60) cycleLengths.add(len);
+          }
+          final variation = cycleLengths.length >= 2
+              ? cycleLengths.reduce((a, b) => a > b ? a : b) -
+                cycleLengths.reduce((a, b) => a < b ? a : b)
+              : 0;
+          final isIrregular = variation >= 7;
+          final hasAbnormal =
+              cycleLengths.any(cc.CycleCalculator.isAbnormalCycleLength);
+
+          final inLutealPhase = calc != null &&
+              cc.CycleCalculator.isInLutealPhase(calc.nextPeriodPredicted);
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -65,7 +76,27 @@ class PeriodScreen extends ConsumerWidget {
                 _HeroCountdownCard(calc: calc),
                 const SizedBox(height: 16),
                 _InfoGrid(calc: calc),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
+
+                // Pregnancy probability — only show when in fertile window
+                if (calc != null && calc.pregnancyProbability > 0) ...[
+                  _ProbabilityCard(probability: calc.pregnancyProbability),
+                  const SizedBox(height: 12),
+                ],
+
+                // Luteal phase / PMS hint
+                if (inLutealPhase) ...[
+                  _LutealHintCard(),
+                  const SizedBox(height: 12),
+                ],
+
+                // Medical alert for abnormal cycle lengths
+                if (hasAbnormal || (isIrregular && cycleLengths.length >= 3)) ...[
+                  _CycleAlertCard(isIrregular: isIrregular, hasAbnormal: hasAbnormal),
+                  const SizedBox(height: 12),
+                ],
+
+                const SizedBox(height: 4),
                 SectionHeader(title: 'Symptome heute'),
                 const SizedBox(height: 8),
                 _SymptomEntry(ref: ref),
@@ -105,14 +136,17 @@ class PeriodScreen extends ConsumerWidget {
             final d = await showDatePicker(
               context: ctx,
               initialDate: startDate,
-              firstDate: DateTime(2020),
+              // Dynamic: allow entry 5 years back from today — not a hardcoded year
+              firstDate: DateTime(DateTime.now().year - 5),
               lastDate: DateTime.now(),
             );
             if (d != null) startDate = d;
           },
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Abbrechen')),
           TextButton(
             onPressed: () async {
               await ref.read(periodRepositoryProvider).insertPeriodEntry(
@@ -128,30 +162,23 @@ class PeriodScreen extends ConsumerWidget {
   }
 }
 
-class CycleCalculation {
-  final DateTime ovulationDate;
-  final DateTime fertileStart;
-  final DateTime fertileEnd;
-  final DateTime nextPeriodPredicted;
-  final double pregnancyProbability;
-  const CycleCalculation({
-    required this.ovulationDate,
-    required this.fertileStart,
-    required this.fertileEnd,
-    required this.nextPeriodPredicted,
-    required this.pregnancyProbability,
-  });
-}
+// ── Hero countdown card ───────────────────────────────────────────────────────
 
 class _HeroCountdownCard extends StatelessWidget {
   const _HeroCountdownCard({this.calc});
-  final CycleCalculation? calc;
+  final cc.CycleCalculation? calc;
 
   @override
   Widget build(BuildContext context) {
-    final days = calc != null
-        ? cc.CycleCalculator.daysUntilNextPeriod(calc!.nextPeriodPredicted)
-        : null;
+    final days =
+        calc != null ? cc.CycleCalculator.daysUntilNextPeriod(calc!.nextPeriodPredicted) : null;
+
+    final (label, daysText) = switch (days) {
+      null => ('Noch keine Daten', '—'),
+      0 => ('Periode erwartet', 'Heute'),
+      < 0 => ('Periode überfällig', '${days.abs()} T'),
+      _ => ('Tage bis zur nächsten Periode', '$days'),
+    };
 
     return Container(
       width: double.infinity,
@@ -167,14 +194,12 @@ class _HeroCountdownCard extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            days != null ? '$days' : '—',
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge
-                ?.copyWith(color: Colors.white),
+            daysText,
+            style:
+                Theme.of(context).textTheme.displayLarge?.copyWith(color: Colors.white),
           ),
           Text(
-            'Tage bis zur nächsten Periode',
+            label,
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium
@@ -186,9 +211,11 @@ class _HeroCountdownCard extends StatelessWidget {
   }
 }
 
+// ── Info grid (ovulation + fertile window) ───────────────────────────────────
+
 class _InfoGrid extends StatelessWidget {
   const _InfoGrid({this.calc});
-  final CycleCalculation? calc;
+  final cc.CycleCalculation? calc;
 
   @override
   Widget build(BuildContext context) {
@@ -196,14 +223,16 @@ class _InfoGrid extends StatelessWidget {
       children: [
         _InfoTile(
           label: 'Eisprung',
-          value: calc != null ? traum_dates.formatDate(calc!.ovulationDate) : '—',
+          value:
+              calc != null ? traum_dates.formatDate(calc!.ovulationDate) : '—',
           color: TraumColors.ovulationCyan,
         ),
         const SizedBox(width: 12),
         _InfoTile(
           label: 'Fruchtbar',
           value: calc != null
-              ? '${calc!.fertileStart.day}.${calc!.fertileStart.month} – ${calc!.fertileEnd.day}.${calc!.fertileEnd.month}'
+              ? '${calc!.fertileStart.day}.${calc!.fertileStart.month} – '
+                '${calc!.fertileEnd.day}.${calc!.fertileEnd.month}'
               : '—',
           color: TraumColors.fertileCyan,
         ),
@@ -213,7 +242,8 @@ class _InfoGrid extends StatelessWidget {
 }
 
 class _InfoTile extends StatelessWidget {
-  const _InfoTile({required this.label, required this.value, required this.color});
+  const _InfoTile(
+      {required this.label, required this.value, required this.color});
   final String label;
   final String value;
   final Color color;
@@ -229,9 +259,17 @@ class _InfoTile extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+                  Container(
+                      width: 8,
+                      height: 8,
+                      decoration:
+                          BoxDecoration(color: color, shape: BoxShape.circle)),
                   const SizedBox(width: 6),
-                  Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TraumColors.onBackgroundMuted)),
+                  Text(label,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: TraumColors.onBackgroundMuted)),
                 ],
               ),
               const SizedBox(height: 4),
@@ -244,6 +282,142 @@ class _InfoTile extends StatelessWidget {
   }
 }
 
+// ── Pregnancy probability card ────────────────────────────────────────────────
+
+class _ProbabilityCard extends StatelessWidget {
+  const _ProbabilityCard({required this.probability});
+  final double probability;
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = (probability * 100).round();
+    return TraumCard(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(Icons.favorite_rounded,
+                color: TraumColors.periodRose, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Empfängniswahrscheinlichkeit heute',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: TraumColors.onBackgroundMuted),
+              ),
+            ),
+            Text(
+              '$pct %',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(color: TraumColors.periodRose),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Luteal phase / PMS hint card ─────────────────────────────────────────────
+
+// Shows in the 14 days before the predicted period — Bäckström et al. 2003 [6]
+class _LutealHintCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TraumCard(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.info_outline_rounded,
+                color: TraumColors.warning, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lutealphase aktiv',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: TraumColors.warning),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'In den ~14 Tagen vor der Periode können PMS-Symptome '
+                    'wie Stimmungsschwankungen, Kopfschmerzen und Müdigkeit auftreten.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: TraumColors.onBackgroundMuted),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Abnormal cycle alert card ─────────────────────────────────────────────────
+
+class _CycleAlertCard extends StatelessWidget {
+  const _CycleAlertCard({required this.isIrregular, required this.hasAbnormal});
+  final bool isIrregular;
+  final bool hasAbnormal;
+
+  @override
+  Widget build(BuildContext context) {
+    final msg = hasAbnormal
+        ? 'Ein oder mehrere Zyklen liegen außerhalb des normalen Bereichs (21–35 Tage). '
+          'Bei anhaltender Unregelmäßigkeit ärztliche Abklärung empfohlen.'
+        : 'Dein Zyklus ist unregelmäßig (Schwankung ≥ 7 Tage). '
+          'Bei anhaltender Unregelmäßigkeit ärztliche Abklärung empfohlen.';
+
+    return TraumCard(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.warning_amber_rounded,
+                color: TraumColors.error, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    hasAbnormal ? 'Zyklus auffällig' : 'Unregelmäßiger Zyklus',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(color: TraumColors.error),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    msg,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: TraumColors.onBackgroundMuted),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Symptom entry ─────────────────────────────────────────────────────────────
+
 class _SymptomEntry extends StatefulWidget {
   const _SymptomEntry({required this.ref});
   final WidgetRef ref;
@@ -253,7 +427,14 @@ class _SymptomEntry extends StatefulWidget {
 }
 
 class _SymptomEntryState extends State<_SymptomEntry> {
-  final List<String> _symptoms = ['Krämpfe', 'Kopfschmerzen', 'Stimmungsschwankungen', 'Blähungen', 'Müdigkeit', 'Rückenschmerzen'];
+  final List<String> _symptoms = [
+    'Krämpfe',
+    'Kopfschmerzen',
+    'Stimmungsschwankungen',
+    'Blähungen',
+    'Müdigkeit',
+    'Rückenschmerzen'
+  ];
   final Set<String> _selected = {};
 
   @override
@@ -267,17 +448,19 @@ class _SymptomEntryState extends State<_SymptomEntry> {
             Wrap(
               spacing: 8,
               runSpacing: 4,
-              children: _symptoms.map((s) => FilterChip(
-                label: Text(s),
-                selected: _selected.contains(s),
-                onSelected: (v) => setState(() {
-                  if (v) {
-                    _selected.add(s);
-                  } else {
-                    _selected.remove(s);
-                  }
-                }),
-              )).toList(),
+              children: _symptoms
+                  .map((s) => FilterChip(
+                        label: Text(s),
+                        selected: _selected.contains(s),
+                        onSelected: (v) => setState(() {
+                          if (v) {
+                            _selected.add(s);
+                          } else {
+                            _selected.remove(s);
+                          }
+                        }),
+                      ))
+                  .toList(),
             ),
             if (_selected.isNotEmpty) ...[
               const SizedBox(height: 12),
@@ -287,8 +470,9 @@ class _SymptomEntryState extends State<_SymptomEntry> {
                   onPressed: () async {
                     for (final sym in _selected) {
                       await widget.ref.read(periodRepositoryProvider).insertSymptom(
-                        PeriodSymptomsCompanion.insert(logDate: DateTime.now(), symptom: sym),
-                      );
+                            PeriodSymptomsCompanion.insert(
+                                logDate: DateTime.now(), symptom: sym),
+                          );
                     }
                     setState(() => _selected.clear());
                   },
@@ -302,6 +486,8 @@ class _SymptomEntryState extends State<_SymptomEntry> {
     );
   }
 }
+
+// ── Period entry tile ─────────────────────────────────────────────────────────
 
 class _PeriodEntryTile extends StatelessWidget {
   const _PeriodEntryTile({required this.entry, required this.ref});
@@ -323,10 +509,14 @@ class _PeriodEntryTile extends StatelessWidget {
             ),
           ),
           title: Text(traum_dates.formatDate(entry.startDate)),
-          subtitle: entry.endDate != null ? Text('Bis ${traum_dates.formatDate(entry.endDate!)}') : const Text('Andauernd'),
+          subtitle: entry.endDate != null
+              ? Text('Bis ${traum_dates.formatDate(entry.endDate!)}')
+              : const Text('Andauernd'),
           trailing: IconButton(
-            onPressed: () => ref.read(periodRepositoryProvider).deletePeriodEntry(entry.id),
-            icon: const Icon(Icons.delete_outline, color: TraumColors.onBackgroundMuted),
+            onPressed: () =>
+                ref.read(periodRepositoryProvider).deletePeriodEntry(entry.id),
+            icon: const Icon(Icons.delete_outline,
+                color: TraumColors.onBackgroundMuted),
           ),
         ),
       ),
