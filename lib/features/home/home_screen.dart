@@ -6,17 +6,39 @@ import '../../core/components/components.dart';
 import '../../core/navigation/routes.dart';
 import '../../core/providers/preferences_provider.dart';
 import '../../core/providers/repository_providers.dart';
+import '../../core/services/update_service.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/date_utils.dart' as traum_dates;
 import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 import 'widgets/clock_weather_widget.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkUpdate());
+  }
+
+  Future<void> _checkUpdate() async {
+    final info = await UpdateService.checkForUpdate();
+    if (info == null || !mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _UpdateDialog(info: info),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final name = ref.watch(userNameProvider);
     final greet = traum_dates.greeting(name.isEmpty ? '' : ', $name');
     final motivation = traum_dates.dailyMotivation();
@@ -50,6 +72,163 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+// ── Update Dialog ─────────────────────────────────────────────────────────────
+
+class _UpdateDialog extends StatefulWidget {
+  const _UpdateDialog({required this.info});
+  final UpdateInfo info;
+
+  @override
+  State<_UpdateDialog> createState() => _UpdateDialogState();
+}
+
+class _UpdateDialogState extends State<_UpdateDialog> {
+  bool _downloading = false;
+  double? _progress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: const Color(0xFF0F1115),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    gradient: TraumColors.gradientWarm,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.system_update_rounded, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Update verfügbar',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Version ${widget.info.latestVersion}',
+                        style: const TextStyle(color: TraumColors.coralOrange, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (widget.info.releaseNotes.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 200),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                ),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    widget.info.releaseNotes,
+                    style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
+                  ),
+                ),
+              ),
+            ],
+            if (_downloading) ...[
+              const SizedBox(height: 16),
+              LinearProgressIndicator(
+                value: _progress,
+                backgroundColor: Colors.white12,
+                valueColor: const AlwaysStoppedAnimation<Color>(TraumColors.coralOrange),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                _progress != null ? '${(_progress! * 100).round()} %' : 'Verbinde…',
+                style: const TextStyle(color: Colors.white54, fontSize: 11),
+              ),
+            ],
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: _downloading ? null : () => Navigator.pop(context),
+                    style: TextButton.styleFrom(foregroundColor: Colors.white38),
+                    child: const Text('Später'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: _downloading ? null : _download,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      height: 44,
+                      decoration: BoxDecoration(
+                        gradient: _downloading ? null : TraumColors.gradientWarm,
+                        color: _downloading ? Colors.white12 : null,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      alignment: Alignment.center,
+                      child: _downloading
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white54),
+                            )
+                          : const Text(
+                              'Jetzt aktualisieren',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _download() async {
+    setState(() { _downloading = true; _progress = null; });
+    try {
+      await UpdateService.downloadAndInstall(
+        widget.info.apkDownloadUrl,
+        (p) { if (mounted) setState(() => _progress = p); },
+      );
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        setState(() { _downloading = false; _progress = null; });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Download fehlgeschlagen: $e')),
+        );
+      }
+    }
   }
 }
 

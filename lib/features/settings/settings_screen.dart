@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:local_auth/local_auth.dart';
-import 'package:open_file/open_file.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart' show Share, XFile;
@@ -32,10 +30,6 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         children: [
-          // ── App-Update ─────────────────────────────────────────────────────
-          _SectionHeader('App-Update'),
-          const _UpdateCheckerTile(),
-
           // ── Erscheinungsbild ───────────────────────────────────────────────
           _SectionHeader(l10n.settingsAppearance),
           Padding(
@@ -602,181 +596,6 @@ class _WidgetGalleryTile extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-// ── Update Checker ───────────────────────────────────────────────────────────
-
-class _UpdateCheckerTile extends StatefulWidget {
-  const _UpdateCheckerTile();
-  @override
-  State<_UpdateCheckerTile> createState() => _UpdateCheckerTileState();
-}
-
-class _UpdateCheckerTileState extends State<_UpdateCheckerTile> {
-  bool _checking = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.system_update_rounded),
-      title: const Text('Nach Updates suchen'),
-      trailing: _checking
-          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-          : const Icon(Icons.chevron_right_rounded, color: Colors.grey),
-      onTap: _checking ? null : _check,
-    );
-  }
-
-  Future<void> _check() async {
-    setState(() => _checking = true);
-    try {
-      final info = await PackageInfo.fromPlatform();
-      final response = await http.get(
-        Uri.parse('https://api.github.com/repos/Lupus-atque-Corvus/Android-app-/releases/latest'),
-        headers: {'Accept': 'application/vnd.github.v3+json'},
-      ).timeout(const Duration(seconds: 10));
-
-      if (!mounted) return;
-      if (response.statusCode != 200) {
-        _snack('Update-Prüfung fehlgeschlagen (${response.statusCode})');
-        return;
-      }
-
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      final tag = (data['tag_name'] as String? ?? '').replaceFirst('v', '');
-
-      if (!_isNewer(tag, info.version)) {
-        _snack('App ist aktuell (v${info.version})');
-        return;
-      }
-
-      final assets = (data['assets'] as List<dynamic>?) ?? [];
-      final apkAsset = assets
-          .cast<Map<String, dynamic>>()
-          .where((a) => (a['name'] as String?) == 'app-arm64-v8a-release.apk')
-          .firstOrNull;
-
-      if (apkAsset == null) {
-        _snack('APK-Datei nicht im Release gefunden.');
-        return;
-      }
-
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => _UpdateDialog(
-          currentVersion: info.version,
-          latestVersion: tag,
-          downloadUrl: apkAsset['browser_download_url'] as String,
-        ),
-      );
-    } catch (e) {
-      if (mounted) _snack('Fehler: $e');
-    } finally {
-      if (mounted) setState(() => _checking = false);
-    }
-  }
-
-  void _snack(String msg) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-
-  static bool _isNewer(String latest, String current) {
-    int part(String v, int i) {
-      final p = v.split('.');
-      return i < p.length ? (int.tryParse(p[i]) ?? 0) : 0;
-    }
-    for (int i = 0; i < 3; i++) {
-      final l = part(latest, i), c = part(current, i);
-      if (l > c) return true;
-      if (l < c) return false;
-    }
-    return false;
-  }
-}
-
-class _UpdateDialog extends StatefulWidget {
-  const _UpdateDialog({required this.currentVersion, required this.latestVersion, required this.downloadUrl});
-  final String currentVersion;
-  final String latestVersion;
-  final String downloadUrl;
-
-  @override
-  State<_UpdateDialog> createState() => _UpdateDialogState();
-}
-
-class _UpdateDialogState extends State<_UpdateDialog> {
-  bool _downloading = false;
-  double? _progress;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Update verfügbar'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Neue Version: v${widget.latestVersion}'),
-          Text('Installiert:  v${widget.currentVersion}'),
-          if (_downloading) ...[
-            const SizedBox(height: 16),
-            LinearProgressIndicator(value: _progress),
-            const SizedBox(height: 6),
-            Text(
-              _progress != null ? '${(_progress! * 100).round()} %' : 'Verbinde...',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: _downloading ? null : () => Navigator.pop(context),
-          child: const Text('Später'),
-        ),
-        TextButton(
-          onPressed: _downloading ? null : _download,
-          child: const Text('Jetzt aktualisieren'),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _download() async {
-    setState(() { _downloading = true; _progress = null; });
-    try {
-      final dir = await getTemporaryDirectory();
-      final apkFile = File('${dir.path}/traum_update.apk');
-
-      final client = http.Client();
-      try {
-        final req = http.Request('GET', Uri.parse(widget.downloadUrl));
-        final resp = await client.send(req);
-        final total = resp.contentLength;
-        int received = 0;
-        final sink = apkFile.openWrite();
-        await for (final chunk in resp.stream) {
-          sink.add(chunk);
-          received += chunk.length;
-          if (total != null && mounted) setState(() => _progress = received / total);
-        }
-        await sink.flush();
-        await sink.close();
-      } finally {
-        client.close();
-      }
-
-      if (mounted) {
-        Navigator.pop(context);
-        await OpenFile.open(apkFile.path);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() { _downloading = false; _progress = null; });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Download fehlgeschlagen: $e')));
-      }
-    }
   }
 }
 
