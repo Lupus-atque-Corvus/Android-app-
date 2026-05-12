@@ -66,15 +66,18 @@ class TraumNavigationBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final slotKeys = ref.watch(navSlotsProvider);
-    final allSlotMods = slotKeys
+
+    // Home is always first (fixed); More button is always last (fixed).
+    // slotKeys contains only the configurable middle slots (1–4, no 'home').
+    final barMods = slotKeys
         .map((k) => _modules.where((m) => m.key == k).firstOrNull)
         .whereType<_Mod>()
         .toList();
 
-    // Show first 4 configured slots in the bar; More button reveals the rest
-    final barMods = allSlotMods.take(4).toList();
-    final barKeySet = barMods.map((m) => m.key).toSet();
-    final moreMods = _modules.where((m) => !barKeySet.contains(m.key)).toList();
+    final barKeySet = {'home', ...slotKeys};
+    final moreMods =
+        _modules.where((m) => !barKeySet.contains(m.key)).toList();
+    final homeMod = _modules.firstWhere((m) => m.key == 'home');
 
     final bottomSafe = MediaQuery.of(context).padding.bottom;
     final l10n = AppLocalizations.of(context);
@@ -104,6 +107,19 @@ class TraumNavigationBar extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Home — always first, fixed
+                  _NavItem(
+                    mod: homeMod,
+                    isActive: location.startsWith(homeMod.route),
+                    label: _label(l10n, homeMod.labelKey),
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      if (!location.startsWith(homeMod.route)) {
+                        context.go(homeMod.route);
+                      }
+                    },
+                  ),
+                  // Configurable slots
                   ...barMods.map((mod) => _NavItem(
                         mod: mod,
                         isActive: location.startsWith(mod.route),

@@ -16,6 +16,8 @@ class TraumTheme {
     final onBackground =
         dark ? TraumColors.onBackground : TraumColors.onBackgroundLight;
     final textTheme = TraumTypography.buildTextTheme(dark: dark);
+    final inputFill =
+        dark ? TraumColors.surfaceVariant : const Color(0xFFEEEEF5);
 
     return ThemeData(
       useMaterial3: true,
@@ -34,8 +36,8 @@ class TraumTheme {
         onSurface: onBackground,
         error: TraumColors.error,
         onError: Colors.white,
-        outline: TraumColors.onBackgroundSubtle,
-        shadow: Colors.black26,
+        outline: TraumColors.inputBorder,
+        shadow: Colors.transparent,
         scrim: Colors.black54,
         inverseSurface:
             dark ? TraumColors.onBackground : TraumColors.background,
@@ -47,6 +49,8 @@ class TraumTheme {
       scaffoldBackgroundColor: background,
       cardColor: surface,
       textTheme: textTheme,
+
+      // ── AppBar ─────────────────────────────────────────────────────────────
       appBarTheme: AppBarTheme(
         backgroundColor: background,
         surfaceTintColor: Colors.transparent,
@@ -55,31 +59,30 @@ class TraumTheme {
         titleTextStyle: textTheme.headlineMedium,
         iconTheme: IconThemeData(color: onBackground),
       ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: TraumColors.bottomNav,
-        selectedItemColor: TraumColors.coralOrange,
-        unselectedItemColor: TraumColors.onBackgroundSubtle,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        elevation: 0,
-      ),
+
+      // ── Cards ──────────────────────────────────────────────────────────────
       cardTheme: CardThemeData(
         color: surface,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: TraumRadius.card),
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: TraumRadius.card,
+          side: const BorderSide(color: TraumColors.cardBorder),
+        ),
         margin: EdgeInsets.zero,
       ),
+
+      // ── Inputs ─────────────────────────────────────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: dark ? TraumColors.surfaceVariant : const Color(0xFFEEEEF5),
+        fillColor: inputFill,
         border: OutlineInputBorder(
           borderRadius: TraumRadius.inputField,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: TraumColors.inputBorder),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: TraumRadius.inputField,
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: TraumColors.inputBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: TraumRadius.inputField,
@@ -92,11 +95,14 @@ class TraumTheme {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
+
+      // ── Buttons ────────────────────────────────────────────────────────────
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: TraumColors.coralOrange,
           foregroundColor: Colors.white,
           elevation: 0,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(borderRadius: TraumRadius.button),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: textTheme.labelLarge,
@@ -118,7 +124,12 @@ class TraumTheme {
           textStyle: textTheme.labelLarge,
         ),
       ),
-      iconTheme: IconThemeData(color: onBackground, size: 24),
+
+      // ── Icons ──────────────────────────────────────────────────────────────
+      iconTheme: IconThemeData(
+          color: onBackground.withValues(alpha: 0.70), size: 24),
+
+      // ── Switch / Checkbox ──────────────────────────────────────────────────
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -142,50 +153,87 @@ class TraumTheme {
         }),
         checkColor: WidgetStateProperty.all(Colors.white),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        side: const BorderSide(color: TraumColors.onBackgroundMuted),
+        side: BorderSide(color: TraumColors.onBackgroundMuted),
       ),
+
+      // ── Divider ────────────────────────────────────────────────────────────
       dividerTheme: const DividerThemeData(
-        color: TraumColors.surfaceVariant,
+        color: TraumColors.divider,
         thickness: 1,
         space: 0,
       ),
+
+      // ── SnackBar ───────────────────────────────────────────────────────────
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: surface,
+        backgroundColor: TraumColors.surface,
         contentTextStyle:
             textTheme.bodyMedium?.copyWith(color: onBackground),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: TraumRadius.card),
-        elevation: 4,
-      ),
-      dialogTheme: DialogThemeData(
-        backgroundColor: surface,
-        shape: RoundedRectangleBorder(borderRadius: TraumRadius.cardLarge),
-        titleTextStyle: textTheme.titleLarge,
-        contentTextStyle: textTheme.bodyMedium,
-      ),
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: surface,
-        shape: const RoundedRectangleBorder(
-          borderRadius: TraumRadius.bottomNav,
+        shape: RoundedRectangleBorder(
+          borderRadius: TraumRadius.card,
+          side: const BorderSide(color: TraumColors.coralOrange, width: 1),
         ),
         elevation: 0,
       ),
+
+      // ── Dialog ─────────────────────────────────────────────────────────────
+      dialogTheme: DialogThemeData(
+        backgroundColor: TraumColors.surface,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: TraumRadius.cardLarge,
+          side: const BorderSide(color: TraumColors.cardBorder),
+        ),
+        titleTextStyle: textTheme.titleLarge,
+        contentTextStyle: textTheme.bodyMedium,
+      ),
+
+      // ── Bottom Sheet ────────────────────────────────────────────────────────
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: TraumColors.surface,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: TraumRadius.bottomNav,
+          side: BorderSide(color: TraumColors.cardBorder),
+        ),
+      ),
+
+      // ── List tiles ─────────────────────────────────────────────────────────
       listTileTheme: ListTileThemeData(
-        iconColor: onBackground,
+        iconColor: onBackground.withValues(alpha: 0.70),
         textColor: onBackground,
         tileColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: TraumRadius.small),
       ),
+
+      // ── Bottom navigation ──────────────────────────────────────────────────
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: TraumColors.bottomNav,
+        selectedItemColor: TraumColors.coralOrange,
+        unselectedItemColor: TraumColors.onBackgroundSubtle,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+      ),
+
+      // ── Expansion tile ─────────────────────────────────────────────────────
       expansionTileTheme: ExpansionTileThemeData(
         iconColor: TraumColors.onBackgroundMuted,
         collapsedIconColor: TraumColors.onBackgroundMuted,
         textColor: onBackground,
         collapsedTextColor: onBackground,
       ),
+
+      // ── Progress indicators ─────────────────────────────────────────────────
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: TraumColors.coralOrange,
-        linearTrackColor: TraumColors.surfaceVariant,
+        linearTrackColor: TraumColors.cardBorder, // white 8%
       ),
+
+      // ── Tab bar ─────────────────────────────────────────────────────────────
       tabBarTheme: TabBarThemeData(
         labelColor: onBackground,
         unselectedLabelColor: TraumColors.onBackgroundMuted,

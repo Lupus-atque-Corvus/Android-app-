@@ -9,9 +9,9 @@ class CircularProgressRing extends StatelessWidget {
     required this.centerLabel,
     this.subLabel,
     this.size = 120,
-    this.strokeWidth = 12,
+    this.strokeWidth = 10,
     this.gradient = TraumColors.gradientCool,
-    this.trackColor = TraumColors.cyanDim,
+    this.trackColor = TraumColors.cardBorder,
   });
 
   final double value;

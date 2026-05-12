@@ -48,4 +48,5 @@ abstract class Routes {
 
   // Settings
   static const settings = '/settings';
+  static const navSettings = '/settings/nav';
 }

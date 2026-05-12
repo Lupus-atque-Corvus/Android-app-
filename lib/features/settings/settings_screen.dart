@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:archive/archive_io.dart';
+import 'package:go_router/go_router.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart' show Share, XFile;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
+import '../../core/navigation/routes.dart';
 import '../../core/notifications/notification_service.dart';
 import '../../core/providers/preferences_provider.dart';
 import '../../core/theme/colors.dart';
@@ -193,7 +195,13 @@ class SettingsScreen extends ConsumerWidget {
 
           // ── Navigation ────────────────────────────────────────────────────
           _SectionHeader(l10n.settingsNavigation),
-          _NavSlotsEditor(prefs: prefs),
+          ListTile(
+            title: const Text('Navigation anpassen'),
+            subtitle: const Text('Slots, Reihenfolge und Sichtbarkeit'),
+            leading: const Icon(Icons.tune_rounded),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(Routes.navSettings),
+          ),
 
           // ── Zyklus ────────────────────────────────────────────────────────
           _SectionHeader(l10n.settingsPeriodTracking),
@@ -545,71 +553,6 @@ class SettingsScreen extends ConsumerWidget {
               }
             },
             child: const Text('Speichern'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Nav Slots ReorderableListView ───────────────────────────────────────────
-
-class _NavSlotsEditor extends ConsumerWidget {
-  const _NavSlotsEditor({required this.prefs});
-  final dynamic prefs;
-
-  static const _allModules = [
-    ('home', 'Start', Icons.home_rounded),
-    ('training', 'Training', Icons.fitness_center_rounded),
-    ('health', 'Gesundheit', Icons.favorite_rounded),
-    ('nutrition', 'Ernährung', Icons.restaurant_rounded),
-    ('planning', 'Planung', Icons.calendar_today_rounded),
-    ('supplements', 'Supplemente', Icons.medication_liquid_rounded),
-    ('medication', 'Medikamente', Icons.medication_rounded),
-    ('abstinence', 'Abstinenz', Icons.self_improvement_rounded),
-    ('budget', 'Budget', Icons.account_balance_wallet_rounded),
-    ('period', 'Zyklus', Icons.circle_rounded),
-  ];
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final slots = ref.watch(navSlotsProvider);
-    final displaySlots = slots.take(5).toList();
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Reihenfolge der 5 Slots (ziehen zum Sortieren):', style: TextStyle(fontSize: 12, color: Colors.grey)),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 280,
-            child: ReorderableListView(
-              onReorder: (oldIndex, newIndex) async {
-                if (newIndex > oldIndex) newIndex--;
-                final updated = List<String>.from(displaySlots);
-                final item = updated.removeAt(oldIndex);
-                updated.insert(newIndex, item);
-                await prefs.setNavSlots(jsonEncode(updated));
-              },
-              children: [
-                for (final slot in displaySlots)
-                  Builder(
-                    key: ValueKey(slot),
-                    builder: (_) {
-                      final info = _allModules.firstWhere(
-                        (m) => m.$1 == slot,
-                        orElse: () => (slot, slot, Icons.widgets_rounded),
-                      );
-                      return ListTile(
-                        leading: Icon(info.$3, color: TraumColors.coralOrange),
-                        title: Text(info.$2),
-                        trailing: const Icon(Icons.drag_handle_rounded, color: Colors.grey),
-                      );
-                    },
-                  ),
-              ],
-            ),
           ),
         ],
       ),

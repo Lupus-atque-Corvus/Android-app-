@@ -11,6 +11,7 @@ class TraumCard extends StatelessWidget {
     this.borderRadius,
     this.onTap,
     this.margin,
+    this.glow = false,
   });
 
   final Widget child;
@@ -19,14 +20,19 @@ class TraumCard extends StatelessWidget {
   final BorderRadius? borderRadius;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? margin;
+  /// Set true to add a subtle CoralOrange glow (active/highlighted state).
+  final bool glow;
 
   @override
   Widget build(BuildContext context) {
+    final radius = borderRadius ?? TraumRadius.card;
     Widget card = Container(
       margin: margin,
       decoration: BoxDecoration(
         color: color ?? TraumColors.surface,
-        borderRadius: borderRadius ?? TraumRadius.card,
+        borderRadius: radius,
+        border: Border.all(color: TraumColors.cardBorder),
+        boxShadow: glow ? const [TraumColors.coralGlow] : null,
       ),
       child: padding != null
           ? Padding(padding: padding!, child: child)

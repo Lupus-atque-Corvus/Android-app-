@@ -27,6 +27,7 @@ import '../../features/period_tracking/period_screen.dart';
 import '../../features/period_tracking/period_calendar_screen.dart';
 import '../../features/period_tracking/cycle_history_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/settings/nav_settings_screen.dart';
 import 'routes.dart';
 import 'traum_scaffold.dart';
 
@@ -131,7 +132,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
 
           // Settings
-          GoRoute(path: Routes.settings, builder: (_, __) => const SettingsScreen()),
+          GoRoute(
+            path: Routes.settings,
+            builder: (_, __) => const SettingsScreen(),
+            routes: [
+              GoRoute(path: 'nav', builder: (_, __) => const NavSettingsScreen()),
+            ],
+          ),
         ],
       ),
     ],

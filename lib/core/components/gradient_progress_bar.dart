@@ -6,8 +6,8 @@ class GradientProgressBar extends StatelessWidget {
     super.key,
     required this.value,
     this.gradient = TraumColors.gradientCool,
-    this.height = 8,
-    this.radius = 4,
+    this.height = 6,
+    this.radius = 6,
   });
 
   final double value;
@@ -26,11 +26,12 @@ class GradientProgressBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius),
           child: Stack(
             children: [
+              // Track — white 8% opacity
               Container(
                 height: height,
                 width: width,
                 decoration: BoxDecoration(
-                  color: TraumColors.surfaceVariant,
+                  color: TraumColors.cardBorder,
                   borderRadius: BorderRadius.circular(radius),
                 ),
               ),
