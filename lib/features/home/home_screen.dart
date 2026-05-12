@@ -336,6 +336,8 @@ class _ActivityGrid extends ConsumerWidget {
 
 // ── Water card ────────────────────────────────────────────────────────────────
 
+const _waterDailyMaxMl = 10000;
+
 class _WaterCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -344,6 +346,7 @@ class _WaterCard extends ConsumerWidget {
 
     final totalMl = waterAsync.valueOrNull ?? 0;
     final ratio = waterGoal > 0 ? (totalMl / waterGoal).clamp(0.0, 1.0) : 0.0;
+    final limitReached = totalMl >= _waterDailyMaxMl;
 
     return Column(
       children: [
@@ -357,31 +360,27 @@ class _WaterCard extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('$totalMl ml',
-                        style: Theme.of(context).textTheme.titleLarge),
+                    Text('$totalMl ml', style: Theme.of(context).textTheme.titleLarge),
                     Text('Ziel: $waterGoal ml',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: TraumColors.onBackgroundMuted)),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TraumColors.onBackgroundMuted)),
                   ],
                 ),
                 const SizedBox(height: 12),
-                GradientProgressBar(
-                  value: ratio,
-                  gradient: TraumColors.gradientCool,
-                  height: 8,
-                ),
+                GradientProgressBar(value: ratio, gradient: TraumColors.gradientCool, height: 8),
                 const SizedBox(height: 12),
-                Row(
-                  children: [
-                    _WaterButton(ml: 200, ref: ref),
-                    const SizedBox(width: 8),
-                    _WaterButton(ml: 300, ref: ref),
-                    const SizedBox(width: 8),
-                    _WaterButton(ml: 500, ref: ref),
-                  ],
-                ),
+                if (limitReached)
+                  Text('Tageslimit von 10L erreicht',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TraumColors.coralOrange))
+                else
+                  Row(
+                    children: [
+                      _WaterButton(ml: 200, ref: ref, totalMl: totalMl),
+                      const SizedBox(width: 8),
+                      _WaterButton(ml: 300, ref: ref, totalMl: totalMl),
+                      const SizedBox(width: 8),
+                      _WaterButton(ml: 500, ref: ref, totalMl: totalMl),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -392,20 +391,23 @@ class _WaterCard extends ConsumerWidget {
 }
 
 class _WaterButton extends StatelessWidget {
-  const _WaterButton({required this.ml, required this.ref});
+  const _WaterButton({required this.ml, required this.ref, required this.totalMl});
   final int ml;
   final WidgetRef ref;
+  final int totalMl;
 
   @override
   Widget build(BuildContext context) {
+    final wouldExceed = totalMl + ml > _waterDailyMaxMl;
     return Expanded(
       child: OutlinedButton(
-        onPressed: () => ref.read(nutritionRepositoryProvider).insertWaterLog(
-              WaterLogsCompanion(
-                logDate: Value(DateTime.now()),
-                amountMl: Value(ml),
-              ),
-            ),
+        onPressed: wouldExceed
+            ? () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Tageslimit von 10L erreicht')),
+                )
+            : () => ref.read(nutritionRepositoryProvider).insertWaterLog(
+                  WaterLogsCompanion(logDate: Value(DateTime.now()), amountMl: Value(ml)),
+                ),
         child: Text(ml == 200
             ? AppLocalizations.of(context).homeWaterAdd200
             : ml == 300
@@ -428,16 +430,20 @@ class _TodayGrid extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SectionHeader(title: AppLocalizations.of(context).planningTodos),
+              SectionHeader(
+                title: AppLocalizations.of(context).planningTodos,
+                trailing: TextButton(
+                  onPressed: () => context.push(Routes.planning),
+                  child: const Text('Alle', style: TextStyle(color: TraumColors.coralOrange, fontSize: 12)),
+                ),
+              ),
               const SizedBox(height: 8),
               TraumCard(
+                onTap: () => context.push(Routes.planning),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text('Keine offenen Aufgaben',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: TraumColors.onBackgroundMuted)),
+                  child: Text('Alle Todos anzeigen',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TraumColors.onBackgroundMuted)),
                 ),
               ),
             ],
@@ -455,7 +461,7 @@ class _TodayGrid extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: MedicationDotRow(
                     slots: const [],
-                    onAdd: () {},
+                    onAdd: () => context.push(Routes.medication),
                   ),
                 ),
               ),
@@ -477,13 +483,11 @@ class _HabitsCard extends StatelessWidget {
         SectionHeader(title: AppLocalizations.of(context).planningHabits),
         const SizedBox(height: 8),
         TraumCard(
+          onTap: () => context.push(Routes.planning),
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('Noch keine Gewohnheiten',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: TraumColors.onBackgroundMuted)),
+            child: Text('Gewohnheiten verwalten',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TraumColors.onBackgroundMuted)),
           ),
         ),
       ],
@@ -503,6 +507,7 @@ class _BudgetCard extends ConsumerWidget {
         SectionHeader(title: AppLocalizations.of(context).budgetTitle),
         const SizedBox(height: 8),
         TraumCard(
+          onTap: () => context.push(Routes.budget),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -510,21 +515,13 @@ class _BudgetCard extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Verfügbar',
-                        style: Theme.of(context).textTheme.bodyMedium),
+                    Text('Verfügbar', style: Theme.of(context).textTheme.bodyMedium),
                     Text('0 $currency',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(color: TraumColors.success)),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: TraumColors.success)),
                   ],
                 ),
                 const SizedBox(height: 12),
-                GradientProgressBar(
-                  value: 0.0,
-                  gradient: TraumColors.gradientCool,
-                  height: 8,
-                ),
+                GradientProgressBar(value: 0.0, gradient: TraumColors.gradientCool, height: 8),
               ],
             ),
           ),

@@ -80,7 +80,7 @@ class NutritionScreen extends ConsumerWidget {
                         return _WaterCard(
                           totalMl: totalMl,
                           goalMl: waterGoal,
-                          onAddWater: (ml) => _addWater(ref, ml),
+                          onAddWater: (ml) => _addWater(context, ref, ml, totalMl),
                         );
                       },
                       loading: () => const ShimmerLoader(),
@@ -150,12 +150,17 @@ class NutritionScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _addWater(WidgetRef ref, int ml) async {
+  static const _waterMaxMl = 10000;
+
+  Future<void> _addWater(BuildContext context, WidgetRef ref, int ml, int totalMl) async {
+    if (totalMl + ml > _waterMaxMl) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tageslimit von 10L erreicht')),
+      );
+      return;
+    }
     await ref.read(nutritionRepositoryProvider).insertWaterLog(
-          WaterLogsCompanion(
-            logDate: Value(DateTime.now()),
-            amountMl: Value(ml),
-          ),
+          WaterLogsCompanion(logDate: Value(DateTime.now()), amountMl: Value(ml)),
         );
   }
 

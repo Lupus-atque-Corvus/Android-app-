@@ -9,14 +9,17 @@ import '../../l10n/app_localizations.dart';
 import '../../data/database/traum_database.dart';
 import 'cycle_calculator.dart' as cc;
 
+// File-scoped provider — fixes infinite loading caused by inline StreamProvider
+final _historyEntriesProvider = StreamProvider<List<PeriodEntry>>((ref) {
+  return ref.watch(periodRepositoryProvider).watchPeriodEntries(limit: 24);
+});
+
 class CycleHistoryScreen extends ConsumerWidget {
   const CycleHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entriesAsync = ref.watch(StreamProvider<List<PeriodEntry>>((ref) {
-      return ref.watch(periodRepositoryProvider).watchPeriodEntries(limit: 24);
-    }));
+    final entriesAsync = ref.watch(_historyEntriesProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context).periodMyCycles)),
@@ -24,11 +27,15 @@ class CycleHistoryScreen extends ConsumerWidget {
         data: (entries) {
           if (entries.isEmpty) {
             return Center(
-                child: Text('Noch keine Einträge',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: TraumColors.onBackgroundMuted)));
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Text(
+                  'Noch keine Zyklusdaten. Trage deine erste Periode ein um zu beginnen.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: TraumColors.onBackgroundMuted),
+                ),
+              ),
+            );
           }
 
           // Calculate cycle lengths from consecutive entries (newest first from DB)

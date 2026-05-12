@@ -71,7 +71,10 @@ class SettingsScreen extends ConsumerWidget {
                 ButtonSegment(value: 'imperial', label: Text('Imperial')),
               ],
               selected: {ref.watch(unitSystemProvider)},
-              onSelectionChanged: (s) => prefs.setUnitSystem(s.first),
+              onSelectionChanged: (s) async {
+                await prefs.setUnitSystem(s.first);
+                ref.read(prefsVersionProvider.notifier).update((v) => v + 1);
+              },
             ),
           ),
 
@@ -82,6 +85,7 @@ class SettingsScreen extends ConsumerWidget {
             value: prefs.notifMedication,
             onChanged: (v) async {
               await prefs.setNotifMedication(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
               await _reschedule(prefs);
             },
           ),
@@ -90,6 +94,7 @@ class SettingsScreen extends ConsumerWidget {
             value: prefs.notifSupplement,
             onChanged: (v) async {
               await prefs.setNotifSupplement(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
               await _reschedule(prefs);
             },
           ),
@@ -98,6 +103,7 @@ class SettingsScreen extends ConsumerWidget {
             value: prefs.notifWorkout,
             onChanged: (v) async {
               await prefs.setNotifWorkout(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
               await _reschedule(prefs);
             },
           ),
@@ -106,6 +112,7 @@ class SettingsScreen extends ConsumerWidget {
             value: prefs.notifWater,
             onChanged: (v) async {
               await prefs.setNotifWater(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
               await _reschedule(prefs);
             },
           ),
@@ -114,6 +121,7 @@ class SettingsScreen extends ConsumerWidget {
             value: prefs.notifTodo,
             onChanged: (v) async {
               await prefs.setNotifTodo(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
               await _reschedule(prefs);
             },
           ),
@@ -122,13 +130,17 @@ class SettingsScreen extends ConsumerWidget {
             value: prefs.notifHabit,
             onChanged: (v) async {
               await prefs.setNotifHabit(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
               await _reschedule(prefs);
             },
           ),
           SwitchListTile(
             title: Text(l10n.notifPeriod),
             value: prefs.notifPeriod,
-            onChanged: (v) => prefs.setNotifPeriod(v),
+            onChanged: (v) async {
+              await prefs.setNotifPeriod(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
+            },
           ),
 
           // ── Ziele ─────────────────────────────────────────────────────────
@@ -154,12 +166,7 @@ class SettingsScreen extends ConsumerWidget {
 
           // ── Datenschutz & Sicherheit ───────────────────────────────────────
           _SectionHeader(l10n.settingsPrivacy),
-          SwitchListTile(
-            title: Text(l10n.settingsPinBiometric),
-            subtitle: const Text('Face ID / Fingerabdruck beim Start'),
-            value: prefs.biometricLockEnabled,
-            onChanged: (v) => _toggleBiometric(context, prefs, v),
-          ),
+          _BiometricTile(ref: ref),
           ListTile(
             title: Text(l10n.settingsExportData),
             leading: const Icon(Icons.upload_outlined),
@@ -187,22 +194,15 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _showWeatherEdit(context, prefs),
           ),
 
-          // ── Navigation ────────────────────────────────────────────────────
-          _SectionHeader(l10n.settingsNavigation),
-          ListTile(
-            title: const Text('Navigation anpassen'),
-            subtitle: const Text('Slots, Reihenfolge und Sichtbarkeit'),
-            leading: const Icon(Icons.tune_rounded),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => context.push(Routes.navSettings),
-          ),
-
           // ── Zyklus ────────────────────────────────────────────────────────
           _SectionHeader(l10n.settingsPeriodTracking),
           SwitchListTile(
             title: Text(l10n.settingsPeriodTracking),
             value: prefs.isPeriodTrackingEnabled,
-            onChanged: (v) => prefs.setIsPeriodTrackingEnabled(v),
+            onChanged: (v) async {
+              await prefs.setIsPeriodTrackingEnabled(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
+            },
           ),
 
           // ── Budget ────────────────────────────────────────────────────────
@@ -240,7 +240,11 @@ class SettingsScreen extends ConsumerWidget {
                   ],
                 ),
               );
-              if (confirm == true) await prefs.setOnboardingComplete(false);
+              if (confirm == true) {
+                await prefs.setOnboardingComplete(false);
+                ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
+                if (context.mounted) context.go(Routes.onboarding);
+              }
             },
           ),
           ListTile(
@@ -271,24 +275,6 @@ class SettingsScreen extends ConsumerWidget {
       habitEnabled: prefs.notifHabit,
       todoEnabled: prefs.notifTodo,
     ));
-  }
-
-  Future<void> _toggleBiometric(BuildContext context, dynamic prefs, bool enable) async {
-    if (enable) {
-      final auth = LocalAuthentication();
-      final canAuth = await auth.canCheckBiometrics;
-      if (!canAuth) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Biometrie nicht verfügbar auf diesem Gerät.')),
-          );
-        }
-        return;
-      }
-      final ok = await auth.authenticate(localizedReason: 'Biometrische Sperre aktivieren');
-      if (!ok) return;
-    }
-    await prefs.setBiometricLockEnabled(enable);
   }
 
   Future<void> _exportJson(BuildContext context) async {
@@ -550,6 +536,71 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── Biometric tile ───────────────────────────────────────────────────────────
+
+class _BiometricTile extends ConsumerStatefulWidget {
+  const _BiometricTile({required this.ref});
+  final WidgetRef ref;
+
+  @override
+  ConsumerState<_BiometricTile> createState() => _BiometricTileState();
+}
+
+class _BiometricTileState extends ConsumerState<_BiometricTile> {
+  bool? _available;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAvailability();
+  }
+
+  Future<void> _checkAvailability() async {
+    try {
+      final auth = LocalAuthentication();
+      final canCheck = await auth.canCheckBiometrics;
+      final isAvailable = canCheck || await auth.isDeviceSupported();
+      if (mounted) setState(() => _available = isAvailable);
+    } catch (_) {
+      if (mounted) setState(() => _available = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefs = ref.watch(preferencesRepositoryProvider);
+    final available = _available;
+
+    if (available == null) {
+      return const ListTile(
+        title: Text('Face ID / Fingerabdruck'),
+        trailing: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+      );
+    }
+
+    return SwitchListTile(
+      title: const Text('Face ID / Fingerabdruck'),
+      subtitle: Text(available ? 'Beim App-Start authentifizieren' : 'Keine Biometrie auf diesem Gerät verfügbar'),
+      value: available && prefs.biometricLockEnabled,
+      onChanged: available
+          ? (v) async {
+              if (v) {
+                try {
+                  final auth = LocalAuthentication();
+                  final ok = await auth.authenticate(localizedReason: 'Biometrische Sperre aktivieren');
+                  if (!ok) return;
+                } catch (_) {
+                  return;
+                }
+              }
+              await prefs.setBiometricLockEnabled(v);
+              ref.read(prefsVersionProvider.notifier).update((i) => i + 1);
+            }
+          : null,
     );
   }
 }

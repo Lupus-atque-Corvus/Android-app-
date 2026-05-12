@@ -265,7 +265,7 @@ class _MoreButton extends StatelessWidget {
 
 // ── More bottom sheet ─────────────────────────────────────────────────────────
 
-class _MoreSheet extends StatelessWidget {
+class _MoreSheet extends ConsumerWidget {
   const _MoreSheet({
     required this.mods,
     required this.location,
@@ -277,12 +277,20 @@ class _MoreSheet extends StatelessWidget {
   final AppLocalizations l10n;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final slots = ref.watch(navSlotsProvider);
+    final notifier = ref.read(navSlotsProvider.notifier);
+
+    // Available modules not yet in bar
+    final barKeySet = {'home', ...slots};
+    final available = _modules.where((m) => !barKeySet.contains(m.key) && m.key != 'home').toList();
+    final canAdd = slots.length < 4;
+
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF0F1115),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(color: Colors.white.withValues(alpha:0.10)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
       ),
       padding: EdgeInsets.only(
         left: 16,
@@ -293,75 +301,237 @@ class _MoreSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Handle
           Container(
             width: 40,
             height: 4,
-            margin: const EdgeInsets.only(bottom: 20),
+            margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha:0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 2.8,
+
+          // ── Leiste anpassen ───────────────────────────────────────────────
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'LEISTE ANPASSEN',
+              style: TextStyle(
+                color: TraumColors.coralOrange.withValues(alpha: 0.8),
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.8,
+              ),
             ),
-            itemCount: mods.length,
-            itemBuilder: (_, i) {
-              final mod = mods[i];
-              final isActive = location.startsWith(mod.route);
-              final ac = _accent(mod.key);
-              return GestureDetector(
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  Navigator.pop(context);
-                  context.go(mod.route);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isActive
-                        ? ac.withValues(alpha:0.12)
-                        : Colors.white.withValues(alpha:0.05),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isActive
-                          ? ac.withValues(alpha:0.20)
-                          : Colors.white.withValues(alpha:0.08),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 56,
+            child: Row(
+              children: [
+                // Home (fixed)
+                _SlotChip(
+                  icon: Icons.home_rounded,
+                  label: 'Start',
+                  accent: TraumColors.coralOrange,
+                  fixed: true,
+                  onLongPress: null,
+                ),
+                const SizedBox(width: 8),
+                // Configurable slots
+                ...slots.map((key) {
+                  final mod = _modules.where((m) => m.key == key).firstOrNull;
+                  if (mod == null) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: _SlotChip(
+                      icon: mod.icon,
+                      label: _label(l10n, mod.labelKey),
+                      accent: _accent(mod.key),
+                      fixed: false,
+                      onLongPress: () {
+                        HapticFeedback.mediumImpact();
+                        notifier.removeSlot(key);
+                      },
+                    ),
+                  );
+                }),
+                // Add button
+                if (canAdd)
+                  GestureDetector(
+                    onTap: () => _showAddDialog(context, available, notifier, l10n),
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: TraumColors.coralOrange.withValues(alpha: 0.4), width: 1.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.add_rounded, color: TraumColors.coralOrange.withValues(alpha: 0.7), size: 20),
                     ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  child: Row(
-                    children: [
-                      Icon(
-                        mod.icon,
-                        size: 20,
-                        color: isActive ? ac : Colors.white.withValues(alpha:0.70),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _label(l10n, mod.labelKey),
-                          style: TextStyle(
-                            color: isActive ? ac : Colors.white.withValues(alpha:0.70),
-                            fontSize: 13,
-                            fontWeight:
-                                isActive ? FontWeight.w600 : FontWeight.normal,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
+                // More (fixed)
+                const Spacer(),
+                _SlotChip(
+                  icon: Icons.more_horiz_rounded,
+                  label: 'Mehr',
+                  accent: Colors.white38,
+                  fixed: true,
+                  onLongPress: null,
                 ),
-              );
-            },
+              ],
+            ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(top: 6, bottom: 16),
+            child: Text(
+              'Long-Press auf Slot zum Entfernen',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.30), fontSize: 11),
+            ),
+          ),
+
+          // ── Module grid ───────────────────────────────────────────────────
+          if (mods.isNotEmpty) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'WEITERE MODULE',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.40),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 2.8,
+              ),
+              itemCount: mods.length,
+              itemBuilder: (_, i) {
+                final mod = mods[i];
+                final isActive = location.startsWith(mod.route);
+                final ac = _accent(mod.key);
+                return GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    Navigator.pop(context);
+                    context.go(mod.route);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isActive ? ac.withValues(alpha: 0.12) : Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isActive ? ac.withValues(alpha: 0.20) : Colors.white.withValues(alpha: 0.08),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      children: [
+                        Icon(mod.icon, size: 20, color: isActive ? ac : Colors.white.withValues(alpha: 0.70)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _label(l10n, mod.labelKey),
+                            style: TextStyle(
+                              color: isActive ? ac : Colors.white.withValues(alpha: 0.70),
+                              fontSize: 13,
+                              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ],
+      ),
+    );
+  }
+
+  void _showAddDialog(
+    BuildContext context,
+    List<_Mod> available,
+    NavSlotsNotifier notifier,
+    AppLocalizations l10n,
+  ) {
+    if (available.isEmpty) return;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF141720),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Modul hinzufügen', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 12),
+            ...available.map((mod) => ListTile(
+              leading: Icon(mod.icon, color: _accent(mod.key)),
+              title: Text(_label(l10n, mod.labelKey), style: const TextStyle(color: Colors.white)),
+              onTap: () {
+                HapticFeedback.selectionClick();
+                notifier.addSlot(mod.key);
+                Navigator.pop(context);
+              },
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Slot chip (for "Leiste anpassen") ────────────────────────────────────────
+
+class _SlotChip extends StatelessWidget {
+  const _SlotChip({
+    required this.icon,
+    required this.label,
+    required this.accent,
+    required this.fixed,
+    required this.onLongPress,
+  });
+  final IconData icon;
+  final String label;
+  final Color accent;
+  final bool fixed;
+  final VoidCallback? onLongPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: onLongPress,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: fixed ? Colors.white.withValues(alpha: 0.04) : accent.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: fixed ? Colors.white.withValues(alpha: 0.08) : accent.withValues(alpha: 0.25)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: fixed ? Colors.white38 : accent),
+            const SizedBox(width: 6),
+            Text(label, style: TextStyle(color: fixed ? Colors.white38 : accent, fontSize: 12, fontWeight: FontWeight.w600)),
+          ],
+        ),
       ),
     );
   }

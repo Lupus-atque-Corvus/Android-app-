@@ -8,7 +8,11 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('Override in ProviderScope');
 });
 
+// Increment to force preferencesRepositoryProvider to rebuild and notify watchers
+final prefsVersionProvider = StateProvider<int>((ref) => 0);
+
 final preferencesRepositoryProvider = Provider<PreferencesRepository>((ref) {
+  ref.watch(prefsVersionProvider); // rebuild when any pref changes
   return PreferencesRepository(ref.watch(sharedPreferencesProvider));
 });
 

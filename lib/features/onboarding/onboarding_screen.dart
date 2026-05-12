@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import '../../core/navigation/routes.dart';
 import '../../core/providers/preferences_provider.dart';
 import '../../core/theme/colors.dart';
@@ -41,6 +44,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   int _avgCycleLength = 28;
   int _avgPeriodLength = 5;
 
+  // Weather location
+  double? _weatherLat;
+  double? _weatherLon;
+  String? _weatherCity;
+
   List<Widget> get _pages {
     final pages = <Widget>[
       _WelcomePage(onNext: _nextPage),
@@ -61,6 +69,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         onWeightChanged: (v) => setState(() => _weightGoalKg = v),
         heightCm: _heightCm,
         onHeightChanged: (v) => setState(() => _heightCm = v),
+        onNext: _nextPage,
+      ),
+      _WeatherLocationPage(
+        onLocationDetected: (lat, lon, city) => setState(() {
+          _weatherLat = lat;
+          _weatherLon = lon;
+          _weatherCity = city;
+        }),
         onNext: _nextPage,
       ),
       _NutritionGoalsPage(
@@ -117,6 +133,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     if (_biologicalSex == 'female') {
       await prefs.setAvgCycleLength(_avgCycleLength);
       await prefs.setAvgPeriodLength(_avgPeriodLength);
+    }
+    if (_weatherLat != null && _weatherLon != null) {
+      await prefs.setWeatherLocation(_weatherLat!, _weatherLon!);
+    }
+    if (_weatherCity != null && _weatherCity!.isNotEmpty) {
+      await prefs.setWeatherCityName(_weatherCity!);
     }
     await prefs.setNavSlots('[${_navSlots.map((s) => '"$s"').join(',')}]');
     await prefs.setOnboardingComplete(true);
@@ -574,6 +596,244 @@ class _DonePage extends StatelessWidget {
           ),
           const SizedBox(height: 48),
           GradientButton(label: "Los geht's", onPressed: onFinish),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Weather location page ─────────────────────────────────────────────────────
+
+class _WeatherLocationPage extends StatefulWidget {
+  const _WeatherLocationPage({
+    required this.onLocationDetected,
+    required this.onNext,
+  });
+
+  final void Function(double lat, double lon, String city) onLocationDetected;
+  final VoidCallback onNext;
+
+  @override
+  State<_WeatherLocationPage> createState() => _WeatherLocationPageState();
+}
+
+class _WeatherLocationPageState extends State<_WeatherLocationPage> {
+  bool _detecting = false;
+  bool _locationSaved = false;
+  String? _savedName;
+  final _cityCtrl = TextEditingController();
+  bool _searching = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _cityCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _autoDetect() async {
+    setState(() {
+      _detecting = true;
+      _error = null;
+    });
+    try {
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          setState(() {
+            _detecting = false;
+            _error = 'Standortzugriff verweigert';
+          });
+        }
+        return;
+      }
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low,
+      );
+      String cityName = '';
+      try {
+        final uri = Uri.https(
+          'nominatim.openstreetmap.org',
+          '/reverse',
+          {
+            'lat': pos.latitude.toString(),
+            'lon': pos.longitude.toString(),
+            'format': 'json',
+            'zoom': '10',
+          },
+        );
+        final resp =
+            await http.get(uri, headers: {'User-Agent': 'TRAUM-App/1.0'});
+        final data = json.decode(resp.body) as Map<String, dynamic>;
+        final address = data['address'] as Map<String, dynamic>?;
+        cityName = (address?['city'] ??
+                address?['town'] ??
+                address?['village'] ??
+                '') as String;
+      } catch (_) {}
+
+      widget.onLocationDetected(pos.latitude, pos.longitude, cityName);
+      if (mounted) {
+        setState(() {
+          _detecting = false;
+          _locationSaved = true;
+          _savedName = cityName.isNotEmpty
+              ? cityName
+              : '${pos.latitude.toStringAsFixed(2)}, ${pos.longitude.toStringAsFixed(2)}';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _detecting = false;
+          _error = 'Fehler: $e';
+        });
+      }
+    }
+  }
+
+  Future<void> _searchCity() async {
+    final city = _cityCtrl.text.trim();
+    if (city.isEmpty) return;
+    setState(() {
+      _searching = true;
+      _error = null;
+    });
+    try {
+      final uri = Uri.https(
+        'geocoding-api.open-meteo.com',
+        '/v1/search',
+        {'name': city, 'count': '1', 'language': 'de'},
+      );
+      final resp = await http.get(uri);
+      final data = json.decode(resp.body) as Map<String, dynamic>;
+      final results = data['results'] as List?;
+      if (results != null && results.isNotEmpty) {
+        final first = results[0] as Map<String, dynamic>;
+        final lat = (first['latitude'] as num).toDouble();
+        final lon = (first['longitude'] as num).toDouble();
+        final name = first['name'] as String;
+        widget.onLocationDetected(lat, lon, name);
+        if (mounted) {
+          setState(() {
+            _searching = false;
+            _locationSaved = true;
+            _savedName = name;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _searching = false;
+            _error = 'Stadt nicht gefunden';
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _searching = false;
+          _error = 'Suche fehlgeschlagen';
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Wetter-Standort',
+              style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 8),
+          Text(
+            'Für das Wetter-Widget auf der Startseite. Du kannst dies jederzeit in den Einstellungen ändern.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: _detecting ? null : _autoDetect,
+              icon: _detecting
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.my_location_rounded),
+              label: Text(_detecting
+                  ? 'Erkenne Standort…'
+                  : 'Standort automatisch erkennen'),
+            ),
+          ),
+          if (_locationSaved && _savedName != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.check_circle_rounded,
+                    color: TraumColors.success, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  _savedName!,
+                  style: const TextStyle(
+                      color: TraumColors.success, fontSize: 13),
+                ),
+              ],
+            ),
+          ],
+          if (_error != null) ...[
+            const SizedBox(height: 8),
+            Text(_error!,
+                style: const TextStyle(
+                    color: TraumColors.coralOrange, fontSize: 12)),
+          ],
+          const SizedBox(height: 24),
+          const Row(
+            children: [
+              Expanded(child: Divider()),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child:
+                    Text('oder', style: TextStyle(color: Colors.white38)),
+              ),
+              Expanded(child: Divider()),
+            ],
+          ),
+          const SizedBox(height: 24),
+          TextField(
+            controller: _cityCtrl,
+            decoration: InputDecoration(
+              labelText: 'Stadt manuell suchen',
+              suffixIcon: _searching
+                  ? const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child:
+                            CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.search_rounded),
+                      onPressed: _searchCity,
+                    ),
+            ),
+            onSubmitted: (_) => _searchCity(),
+          ),
+          const SizedBox(height: 48),
+          GradientButton(
+            label: _locationSaved ? 'Weiter' : 'Überspringen',
+            onPressed: widget.onNext,
+          ),
         ],
       ),
     );
